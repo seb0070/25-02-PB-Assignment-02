@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { isValidEmail } from '../utils/validators';
+
 
 const SignIn = () => {
     const [mode, setMode] = useState<'login' | 'register'>('login');
