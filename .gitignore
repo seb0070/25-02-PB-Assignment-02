@@ -20,5 +20,10 @@ dist-ssr
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
+*.slnS
 *.sw?
+
+# Environment variables
+.env
+.env.*
+!.env.example
