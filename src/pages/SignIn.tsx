@@ -1,29 +1,55 @@
 import { useState } from 'react';
-import { isValidEmail } from '../utils/validators';
-
+import { useNavigate } from 'react-router-dom';
+import { registerUser, loginUser } from '../utils/auth';
 
 const SignIn = () => {
     const [mode, setMode] = useState<'login' | 'register'>('login');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirm, setConfirm] = useState('');
+
+    const navigate = useNavigate();
+
+    const handleSubmit = () => {
+        if (mode === 'register') {
+            if (password !== confirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            const result = registerUser(email, password);
+            alert(result.message);
+
+            if (result.success) {
+                setMode('login');
+            }
+        } else {
+            const result = loginUser(email, password);
+            alert(result.message);
+
+            if (result.success) {
+                navigate('/');
+            }
+        }
+    };
 
     return (
         <div>
             <h2>{mode === 'login' ? '로그인' : '회원가입'}</h2>
 
-            <input placeholder="이메일" />
-            <input placeholder="비밀번호" type="password" />
+            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" />
+            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호" />
 
             {mode === 'register' && (
-                <input placeholder="비밀번호 확인" type="password" />
+                <input value={confirm} onChange={(e) => setConfirm(e.target.value)} type="password" placeholder="비밀번호 확인" />
             )}
 
-            <button>
+            <button onClick={handleSubmit}>
                 {mode === 'login' ? '로그인' : '회원가입'}
             </button>
 
             <p onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
-                {mode === 'login'
-                    ? '회원가입 하러가기'
-                    : '로그인 하러가기'}
+                {mode === 'login' ? '회원가입 하러가기' : '로그인 하러가기'}
             </p>
         </div>
     );
