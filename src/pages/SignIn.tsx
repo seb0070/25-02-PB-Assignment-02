@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { isLoggedIn } from '../utils/authState';
 import { registerUser, loginUser } from '../utils/auth';
 
 const SignIn = () => {
@@ -9,6 +11,13 @@ const SignIn = () => {
     const [confirm, setConfirm] = useState('');
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isLoggedIn()) {
+            navigate('/');
+        }
+    }, [navigate]);
+
 
     const handleSubmit = () => {
         if (mode === 'register') {
