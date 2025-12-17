@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getPopularMovies } from '../api/movies';
-import { Movie } from '../models/movie';
+import type { Movie } from '../models/movie';
 
 const Home = () => {
     const [movies, setMovies] = useState<Movie[]>([]);

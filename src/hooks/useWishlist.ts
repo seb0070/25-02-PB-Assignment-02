@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Movie } from '../models/movie';
+import type { Movie } from '../models/movie';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 
