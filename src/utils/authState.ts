@@ -1,10 +1,16 @@
 import { storage } from './storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 
-export const isLoggedIn = (): boolean => {
-    const auth = storage.get<{ isLoggedIn: boolean }>(
-        STORAGE_KEYS.AUTH
-    );
+interface AuthState {
+    isLoggedIn: boolean;
+    userId: string;
+}
 
-    return auth?.isLoggedIn === true;
+export const isLoggedIn = (): boolean => {
+    const auth = storage.get<AuthState>(STORAGE_KEYS.AUTH, {
+        isLoggedIn: false,
+        userId: '',
+    });
+
+    return auth.isLoggedIn;
 };
