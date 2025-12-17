@@ -1,14 +1,13 @@
-// 공통 LocalStorage 유틸
-
 export const storage = {
-    get<T>(key: string, defaultValue: T): T {
+    get<T>(key: string, defaultValue?: T): T | null {
         const value = localStorage.getItem(key);
-        if (!value) return defaultValue;
-
+        if (!value) {
+            return defaultValue ?? null;
+        }
         try {
             return JSON.parse(value) as T;
         } catch {
-            return defaultValue;
+            return defaultValue ?? null;
         }
     },
 

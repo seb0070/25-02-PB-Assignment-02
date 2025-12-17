@@ -3,8 +3,8 @@ import { STORAGE_KEYS } from '../constants/storageKeys';
 
 export const isLoggedIn = (): boolean => {
     const auth = storage.get<{ isLoggedIn: boolean }>(
-        STORAGE_KEYS.AUTH,
-        { isLoggedIn: false }
+        STORAGE_KEYS.AUTH
     );
-    return auth.isLoggedIn;
+
+    return auth?.isLoggedIn === true;
 };

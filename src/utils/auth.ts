@@ -10,7 +10,7 @@ export const registerUser = (
     email: string,
     password: string
 ): { success: boolean; message: string } => {
-    const users = storage.get<User[]>(STORAGE_KEYS.USERS, []);
+    const users = storage.get<User[]>(STORAGE_KEYS.USERS, []) ?? [];
 
     const exists = users.some((user) => user.id === email);
     if (exists) {
@@ -27,8 +27,7 @@ export const loginUser = (
     email: string,
     password: string
 ): { success: boolean; message: string } => {
-    const users = storage.get<User[]>(STORAGE_KEYS.USERS, []);
-
+    const users = storage.get<User[]>(STORAGE_KEYS.USERS, []) ?? [];
 
     const user = users.find(
         (u) => u.id === email && u.password === password
