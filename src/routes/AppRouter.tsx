@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Header from '../components/Header';
 import SignIn from '../pages/SignIn';
 import Home from '../pages/Home';
 import Popular from '../pages/Popular';
@@ -8,6 +9,7 @@ import PrivateRoute from './PrivateRoute';
 
 const AppRouter = () => (
     <BrowserRouter>
+        <Header />   {/* ✅ Router 안으로 이동 */}
         <Routes>
             <Route path="/signin" element={<SignIn />} />
 
