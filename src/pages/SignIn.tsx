@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { isLoggedIn } from '../utils/authState';
+import { isValidEmail } from '../utils/validators';
 import { registerUser, loginUser } from '../utils/auth';
 
 const SignIn = () => {
@@ -9,6 +10,12 @@ const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
+    const resetForm = () => {
+        setEmail('');
+        setPassword('');
+        setConfirm('');
+    };
+
 
     const navigate = useNavigate();
 
@@ -21,6 +28,11 @@ const SignIn = () => {
 
     const handleSubmit = () => {
         if (mode === 'register') {
+            if (!isValidEmail(email)) {
+                alert('올바른 이메일 형식이 아닙니다.');
+                return;
+            }
+
             if (password !== confirm) {
                 alert('비밀번호가 일치하지 않습니다.');
                 return;
@@ -30,9 +42,11 @@ const SignIn = () => {
             alert(result.message);
 
             if (result.success) {
+                resetForm();
                 setMode('login');
             }
-        } else {
+        }
+    else {
             const result = loginUser(email, password);
             alert(result.message);
 
@@ -57,7 +71,12 @@ const SignIn = () => {
                 {mode === 'login' ? '로그인' : '회원가입'}
             </button>
 
-            <p onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
+            <p
+                onClick={() => {
+                    resetForm();
+                    setMode(mode === 'login' ? 'register' : 'login');
+                }}
+            >
                 {mode === 'login' ? '회원가입 하러가기' : '로그인 하러가기'}
             </p>
         </div>
