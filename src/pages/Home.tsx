@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { getPopularMovies } from '../api/movies';
 import type { Movie } from '../models/movie';
-import { useWishlist } from '../hooks/useWishlist';
+import MovieCard from '../components/MovieCard';
 
 const Home = () => {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(false);
-    const { toggleWishlist, isWished } = useWishlist();
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -30,22 +29,11 @@ const Home = () => {
         <div>
             <h2>인기 영화</h2>
 
-            {movies.map((movie) => (
-                <div key={movie.id} style={{ marginBottom: '8px' }}>
-                    <span>{movie.title}</span>
-                    <button
-                        onClick={() =>
-                            toggleWishlist({
-                                id: movie.id,
-                                title: movie.title,
-                                poster_path: movie.poster_path,
-                            })
-                        }
-                    >
-                        {isWished(movie.id) ? '찜 해제' : '찜'}
-                    </button>
-                </div>
-            ))}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                {movies.map((movie) => (
+                    <MovieCard key={movie.id} movie={movie} />
+                ))}
+            </div>
         </div>
     );
 };
