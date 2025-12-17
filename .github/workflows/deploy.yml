@@ -10,6 +10,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    environment:
+      name: github-pages
+      url: https://seb0070.github.io/25-02-PB-Assignment-02/
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
