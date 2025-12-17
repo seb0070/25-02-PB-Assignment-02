@@ -1,4 +1,5 @@
 import { useWishlist } from '../hooks/useWishlist';
+import MovieCard from '../components/MovieCard';
 
 const Wishlist = () => {
     const { wishlist } = useWishlist();
@@ -10,9 +11,21 @@ const Wishlist = () => {
     return (
         <div>
             <h2>내가 찜한 영화</h2>
-            {wishlist.map((movie) => (
-                <p key={movie.id}>{movie.title}</p>
-            ))}
+
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                {wishlist.map((movie) => (
+                    <MovieCard
+                        key={movie.id}
+                        movie={{
+                            ...movie,
+                            overview: '',
+                            backdrop_path: '',
+                            vote_average: 0,
+                            release_date: '',
+                        }}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
