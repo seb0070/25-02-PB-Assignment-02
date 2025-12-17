@@ -4,16 +4,30 @@ import { Movie } from '../models/movie';
 
 const Home = () => {
     const [movies, setMovies] = useState<Movie[]>([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getPopularMovies().then((res) => {
-            setMovies(res.data.results);
-        });
+        const fetchMovies = async () => {
+            setLoading(true);
+            try {
+                const res = await getPopularMovies();
+                setMovies(res.data.results);
+            } catch (e) {
+                console.error('TMDB API error', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchMovies();
     }, []);
 
     return (
         <div>
             <h1>Popular Movies</h1>
+
+            {loading && <p>Loading...</p>}
+
             {movies.map((movie) => (
                 <p key={movie.id}>{movie.title}</p>
             ))}
