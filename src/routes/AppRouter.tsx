@@ -8,7 +8,7 @@ import Wishlist from '../pages/Wishlist';
 import PrivateRoute from './PrivateRoute';
 
 const AppRouter = () => (
-    <BrowserRouter>
+    <BrowserRouter basename="/25-02-PB-Assignment-02">
         <Header />   {/* ✅ Router 안으로 이동 */}
         <Routes>
             <Route path="/signin" element={<SignIn />} />
