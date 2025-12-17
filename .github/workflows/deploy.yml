@@ -2,8 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main   # 또는 develop (배포 기준 브랜치)
+    branches: # 배포 기준 브랜치
+      - main
       - develop
 
 jobs:
