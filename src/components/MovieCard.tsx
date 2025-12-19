@@ -7,7 +7,7 @@ interface MovieCardProps {
     movie: Movie;
 }
 
-const MovieCard = ({ movie }: MovieCardProps) => {
+export default function MovieCard({ movie }: MovieCardProps) {
     const navigate = useNavigate();
     const { isWished, toggleWishlist } = useWishlist();
     const wished = isWished(movie.id);
@@ -17,7 +17,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
     };
 
     const handleWishlist = (e: React.MouseEvent) => {
-        e.stopPropagation(); // 카드 클릭 방지
+        e.stopPropagation();
         toggleWishlist(movie);
     };
 
@@ -32,7 +32,6 @@ const MovieCard = ({ movie }: MovieCardProps) => {
                 alt={movie.title}
             />
 
-            {/* ❤️ 찜 토글 (hover 시 노출) */}
             <button
                 className={`wishlist-btn ${wished ? 'active' : ''}`}
                 onClick={handleWishlist}
@@ -42,6 +41,4 @@ const MovieCard = ({ movie }: MovieCardProps) => {
             </button>
         </div>
     );
-};
-
-export default MovieCard;
+}

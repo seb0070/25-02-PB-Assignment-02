@@ -8,6 +8,12 @@
     font-size: 20px;
 }
 
+.row-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff; /* ← 다크 테마 기준 */
+}
+
 .row-slider {
     display: flex;
     gap: 12px;
