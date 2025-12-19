@@ -8,8 +8,9 @@ import Wishlist from '../pages/Wishlist';
 import PrivateRoute from './PrivateRoute';
 
 const AppRouter = () => (
-    <BrowserRouter basename="/25-02-PB-Assignment-02">
-        <Header />   {/* ✅ Router 안으로 이동 */}
+    // ✅ Vite base(/25-02-PB-Assignment-02/)와 맞추기 위해 basename도 끝에 '/' 포함
+    <BrowserRouter basename="/25-02-PB-Assignment-02/">
+        <Header />
         <Routes>
             <Route path="/signin" element={<SignIn />} />
 

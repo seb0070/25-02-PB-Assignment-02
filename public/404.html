@@ -3,9 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <script>
-        sessionStorage.redirect = location.pathname;
-        location.replace("/");
+        // ✅ 현재 URL 전체(경로+쿼리+해시)를 저장
+        sessionStorage.redirect = location.pathname + location.search + location.hash;
+
+        // ✅ GitHub Pages 프로젝트 하위경로로 이동 (vite base와 동일)
+        location.replace("/25-02-PB-Assignment-02/");
     </script>
 </head>
 </html>
-

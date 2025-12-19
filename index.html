@@ -1,24 +1,29 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pb-assignment-02-react</title>
-  </head>
-  <body>
-    <div id="root"></div>
+</head>
+<body>
+<div id="root"></div>
 
-    <script>
-        (function () {
-            const redirect = sessionStorage.redirect;
-            delete sessionStorage.redirect;
-            if (redirect && redirect !== location.pathname) {
-                history.replaceState(null, null, redirect);
-            }
-        })();
-    </script>
+<script>
+    (function () {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
 
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        // ✅ base 경로 (vite.config.ts의 base와 동일하게)
+        const base = "/25-02-PB-Assignment-02/";
+
+        // redirect가 있고, 지금 base 루트로 들어온 상태라면 원래 경로로 복원
+        if (redirect && location.pathname === base) {
+            history.replaceState(null, null, redirect);
+        }
+    })();
+</script>
+
+<script type="module" src="/src/main.tsx"></script>
+</body>
 </html>
