@@ -155,6 +155,41 @@ const Search = () => {
         }
     };
 
+    const executeSearchWithQuery = async (searchQuery: string) => {
+        const hasFilter = hasAnyFilter();
+
+        setIsLoading(true);
+        setResults([]);
+
+        try {
+            // 🔍 검색어만
+            if (searchQuery && !hasFilter) {
+                saveRecentSearch(searchQuery);
+                const res = await searchMulti(searchQuery);
+                setResults((res.data?.results ?? []) as ResultItem[]);
+                return;
+            }
+
+            // 🎛️ 필터만 / 검색어 + 필터
+            if (hasFilter) {
+                saveRecentSearch(searchQuery);
+
+                const res = await discoverMovies({
+                    genre: filters.genre || undefined,
+                    language: filters.language || undefined,
+                    sort: filters.sort,
+                    voteGte: filters.rating ? Number(filters.rating) : undefined,
+                    releaseDateGte: getReleaseDate(filters.releasePeriod),
+                    page: 1,
+                });
+
+                setResults((res.data?.results ?? []) as ResultItem[]);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     const getPosterUrl = (path: string | null, size: 'w185' | 'w342') =>
         path ? `https://image.tmdb.org/t/p/${size}${path}` : '';
@@ -203,14 +238,14 @@ const Search = () => {
                             <div key={item} className="recent-chip">
                                 <button
                                     className="chip-text"
-                                    type="button"
                                     onClick={() => {
                                         setQuery(item);
-                                        void executeSearch();
+                                        void executeSearchWithQuery(item);
                                     }}
                                 >
                                     {item}
                                 </button>
+
                                 <button
                                     className="chip-remove"
                                     type="button"
