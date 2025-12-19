@@ -6,19 +6,23 @@ import './HeroBanner.css';
 
 const IMAGE_BASE = 'https://image.tmdb.org/t/p/original';
 
-export default function HeroBanner() {
+type Props = {
+    onInfo: (movie: Movie) => void;
+};
+
+export default function HeroBanner({ onInfo }: Props) {
     const [movie, setMovie] = useState<Movie | null>(null);
     const { toggleWishlist, isWished } = useWishlist();
 
     useEffect(() => {
-        const fetch = async () => {
+        const fetchMovie = async () => {
             const res = await getTrendingMoviesDay();
             const list: Movie[] = res.data.results ?? [];
-            if (list.length) {
+            if (list.length > 0) {
                 setMovie(list[Math.floor(Math.random() * list.length)]);
             }
         };
-        fetch();
+        fetchMovie();
     }, []);
 
     const bgUrl = useMemo(() => {
@@ -46,33 +50,38 @@ export default function HeroBanner() {
             }}
         >
             <div className="hero-inner">
-                {/* TOP */}
-                <div className="hero-top">
-                    <span className="hero-badge">🔥 오늘의 화제작</span>
-                </div>
+                {/* 🔥 오늘의 화제작 */}
+                <div className="hero-top">🔥 오늘의 화제작</div>
 
-                {/* MIDDLE */}
-                <div className="hero-middle">
+                {/* 🔥 제목 + 설명 */}
+                <div className="hero-text">
                     <h1 className="hero-title">{movie.title}</h1>
-                    <p className="hero-overview">{movie.overview || '설명이 없습니다.'}</p>
+                    <p className="hero-overview">
+                        {movie.overview || '설명이 제공되지 않는 콘텐츠입니다.'}
+                    </p>
                 </div>
 
-                {/* BOTTOM */}
-                <div className="hero-bottom">
-                    <div className="hero-meta">
-                        <span>⭐ {movie.vote_average.toFixed(1)}</span>
-                        <span>📅 {movie.release_date}</span>
-                    </div>
+                {/* 🔥 별점 / 날짜 */}
+                <div className="hero-meta">
+                    <span>⭐ {movie.vote_average.toFixed(1)}</span>
+                    <span>📅 {movie.release_date}</span>
+                </div>
 
-                    <div className="hero-actions">
-                        <button className="btn light">상세정보</button>
-                        <button
-                            className={`btn wish ${isWished(movie.id) ? 'active' : ''}`}
-                            onClick={() => toggleWishlist(movie)}
-                        >
-                            ❤️ 찜하기
-                        </button>
-                    </div>
+                {/* 🔥 버튼 */}
+                <div className="hero-actions">
+                    <button
+                        className="btn light"
+                        onClick={() => onInfo(movie)}
+                    >
+                        상세정보
+                    </button>
+
+                    <button
+                        className={`btn wish ${isWished(movie.id) ? 'active' : ''}`}
+                        onClick={() => toggleWishlist(movie)}
+                    >
+                        {isWished(movie.id) ? '❤️ 찜됨' : '🤍 찜하기'}
+                    </button>
                 </div>
             </div>
         </section>
