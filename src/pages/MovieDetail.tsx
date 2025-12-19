@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import type { Movie } from '../models/movie';
+import type { MovieDetail } from '../models/movie';
 import { getMovieDetail, getMovieVideos } from '../api/movies';
 import './MovieDetail.css';
+
 
 const IMAGE_BASE = 'https://image.tmdb.org/t/p/original';
 
@@ -14,7 +15,7 @@ type Video = {
 
 export default function MovieDetail() {
     const { id } = useParams();
-    const [movie, setMovie] = useState<Movie | null>(null);
+    const [movie, setMovie] = useState<MovieDetail | null>(null);
     const [trailerKey, setTrailerKey] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -76,6 +77,17 @@ export default function MovieDetail() {
             {/* 🎞 정보 영역 */}
             <div className="movie-detail-info">
                 <h1>{movie.title}</h1>
+
+                <div className="movie-detail-genres">
+                    {movie.genres.map((genre, index) => (
+                        <span key={genre.id} className="genre-text">
+                            {genre.name}
+                            {index < movie.genres.length - 1 && (
+                                <span className="genre-separator"> · </span>
+                            )}
+                        </span>
+                    ))}
+                </div>
 
                 <p className="overview">{movie.overview}</p>
 

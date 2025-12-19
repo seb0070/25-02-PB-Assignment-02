@@ -46,3 +46,17 @@
     gap: 16px;
     color: #bbb;
 }
+.movie-detail-genres {
+    margin: 8px 0 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #bbb;
+    letter-spacing: 0.3px;
+}
+
+.movie-detail-genres::before {
+    content: '장르';
+    margin-right: 8px;
+    color: #777;
+    font-weight: 500;
+}
