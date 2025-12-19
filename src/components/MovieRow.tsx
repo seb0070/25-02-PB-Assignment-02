@@ -3,17 +3,29 @@ import type { Movie } from '../models/movie';
 import MovieCard from './MovieCard';
 import './MovieRow.css';
 
-type Fetcher = (page?: number) => Promise<any>;
+/** TMDB 리스트 응답 최소 타입 */
+type MovieListResponse = {
+    data: {
+        results: Movie[];
+    };
+};
+
+type Fetcher = (page?: number) => Promise<MovieListResponse>;
 
 type Props = {
     title: string;
     fetcher: Fetcher;
     onInfo?: (movie: Movie) => void;
-    /** 홈에서는 1페이지만 보여주면 충분하니까 기본 1 */
+    /** 홈에서는 1페이지만 보여주면 충분 */
     page?: number;
 };
 
-export default function MovieRow({ title, fetcher, onInfo, page = 1 }: Props) {
+export default function MovieRow({
+                                     title,
+                                     fetcher,
+                                     onInfo,
+                                     page = 1,
+                                 }: Props) {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(false);
 

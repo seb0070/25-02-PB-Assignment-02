@@ -5,9 +5,10 @@ import './MovieCard.css';
 
 interface MovieCardProps {
     movie: Movie;
+    onInfo?: (movie: Movie) => void;
 }
 
-const MovieCard = ({ movie }: MovieCardProps) => {
+const MovieCard = ({ movie, onInfo }: MovieCardProps) => {
     const navigate = useNavigate();
     const { isWished, toggleWishlist } = useWishlist();
 
@@ -20,7 +21,12 @@ const MovieCard = ({ movie }: MovieCardProps) => {
 
     const handleInfo = (e: React.MouseEvent) => {
         e.stopPropagation();
-        navigate(`/movie/${movie.id}`);
+
+        if (onInfo) {
+            onInfo(movie);
+        } else {
+            navigate(`/movie/${movie.id}`);
+        }
     };
 
     return (
@@ -34,17 +40,13 @@ const MovieCard = ({ movie }: MovieCardProps) => {
                 alt={movie.title}
             />
 
-            {/* ✅ 우측 하단 액션 아이콘 */}
             <div className="card-actions">
-                <button onClick={handleInfo} aria-label="상세 정보">
-                    ℹ
-                </button>
-                <button onClick={handleWishlist} aria-label="찜하기">
+                <button onClick={handleInfo}>ℹ</button>
+                <button onClick={handleWishlist}>
                     {wished ? '❤️' : '🤍'}
                 </button>
             </div>
 
-            {/* ✅ 찜 상태 고정 표시 (크기 변화 없음) */}
             {wished && <div className="wish-indicator">❤️</div>}
         </div>
     );
