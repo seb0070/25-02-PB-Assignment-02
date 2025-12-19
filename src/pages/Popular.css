@@ -131,13 +131,55 @@
 .popular-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 24px;
+    font-size: 14px;
 }
 
-.popular-table th,
-.popular-table td {
-    padding: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+.popular-table thead th {
+    padding: 14px 12px;
+    border-bottom: 1px solid #2a2a2a;
+    color: #aaa;
+    font-weight: 500;
 }
+
+.popular-table tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #1f1f1f;
+    color: #fff;
+}
+
+/* 🔢 랭킹 */
+.popular-table th:nth-child(1),
+.popular-table td:nth-child(1) {
+    text-align: center;
+    width: 80px;
+}
+
+/* 🎬 제목 */
+.popular-table th:nth-child(2),
+.popular-table td:nth-child(2) {
+    text-align: left;
+}
+
+/* ⭐ 평점 */
+.popular-table th:nth-child(3),
+.popular-table td:nth-child(3) {
+    text-align: right;
+    width: 120px;
+}
+
+/* 📅 개봉일 */
+.popular-table th:nth-child(4),
+.popular-table td:nth-child(4) {
+    text-align: right;
+    width: 140px;
+}
+
+/* hover 효과 (은은하게) */
+.popular-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
 
 /* Pagination */
 .pagination {
