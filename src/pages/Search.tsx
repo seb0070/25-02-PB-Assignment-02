@@ -1,65 +1,84 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getPopularMovies, searchMovies } from '../api/movies';
-import type { Movie } from '../models/movie';
+import { searchMulti, getTrendingMoviesDay } from '../api/movies';
 import MovieCard from '../components/MovieCard';
+import type { Movie } from '../models/movie';
 import './Search.css';
+
+type MultiResult = {
+    id: number;
+    media_type: 'movie' | 'tv' | 'person';
+    title?: string;
+    name?: string;
+    poster_path?: string;
+    known_for?: Movie[];
+};
 
 const SearchPage = () => {
     const [params, setParams] = useSearchParams();
     const query = params.get('q') ?? '';
 
-    const [input, setInput] = useState<string>(query);
+    const [input, setInput] = useState(query);
     const [movies, setMovies] = useState<Movie[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
 
-    // URL query가 바뀌면 input도 동기화 (단, ESLint set-state-in-effect 피하려고 한 틱 미룸)
     useEffect(() => {
-        const id = requestAnimationFrame(() => {
-            setInput(query);
-        });
-        return () => cancelAnimationFrame(id);
+        setInput(query);
     }, [query]);
 
-    // 검색 전: 인기 영화 추천 / 검색 후: 검색 결과
     useEffect(() => {
-        const id = requestAnimationFrame(() => {
-            const fetch = async () => {
-                setLoading(true);
-                try {
-                    if (!query.trim()) {
-                        const res = await getPopularMovies(1);
-                        setMovies(res.data.results);
-                    } else {
-                        const res = await searchMovies(query.trim(), 1);
-                        setMovies(res.data.results);
-                    }
-                } catch (e) {
-                    console.error('TMDB API error', e);
-                    setMovies([]);
-                } finally {
-                    setLoading(false);
+        const fetch = async () => {
+            setLoading(true);
+            try {
+                // 검색 전: 오늘의 트렌딩
+                if (!query.trim()) {
+                    const res = await getTrendingMoviesDay();
+                    setMovies(res.data.results);
+                    return;
                 }
-            };
 
-            fetch();
-        });
+                // 🔍 Multi Search
+                const res = await searchMulti(query.trim());
 
-        return () => cancelAnimationFrame(id);
+                // person → known_for 영화로 변환
+                const parsed: Movie[] = res.data.results.flatMap(
+                    (item: MultiResult) => {
+                        if (item.media_type === 'movie' && item.poster_path) {
+                            return item as unknown as Movie;
+                        }
+
+                        if (
+                            item.media_type === 'person' &&
+                            Array.isArray(item.known_for)
+                        ) {
+                            return item.known_for.filter((m) => m.poster_path);
+                        }
+
+                        return [];
+                    }
+                );
+
+                setMovies(parsed);
+            } catch (e) {
+                console.error(e);
+                setMovies([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetch();
     }, [query]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const q = input.trim();
         if (!q) {
-            // 빈 검색이면 q 파라미터 제거(= 추천 콘텐츠 상태)
             setParams({});
             return;
         }
         setParams({ q });
     };
-
-    const title = query.trim() ? `“${query}” 검색 결과` : '추천 콘텐츠';
 
     return (
         <main className="searchPage">
@@ -68,20 +87,17 @@ const SearchPage = () => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="제목, 배우, 장르를 검색해보세요"
-                    aria-label="검색어 입력"
                 />
                 <button type="submit">검색</button>
             </form>
 
             <section className="searchContent">
-                <h2>{title}</h2>
+                <h2>
+                    {query ? `“${query}” 검색 결과` : '오늘의 트렌딩 콘텐츠'}
+                </h2>
 
                 {loading ? (
                     <p className="loading">불러오는 중...</p>
-                ) : movies.length === 0 ? (
-                    <p className="empty">
-                        {query.trim() ? '검색 결과가 없어요.' : '추천 콘텐츠를 불러오지 못했어요.'}
-                    </p>
                 ) : (
                     <div className="movieGrid">
                         {movies.map((movie) => (

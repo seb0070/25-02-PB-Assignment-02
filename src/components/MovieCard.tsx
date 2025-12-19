@@ -1,35 +1,30 @@
+import { Link } from 'react-router-dom';
 import type { Movie } from '../models/movie';
-import { useWishlist } from '../hooks/useWishlist';
 import './MovieCard.css';
 
 type Props = {
     movie: Movie;
+    rank?: number; // ✅ 추가 (Popular에서만 사용)
 };
 
-const MovieCard = ({ movie }: Props) => {
-    const { toggleWishlist, isWished } = useWishlist();
-
+const MovieCard = ({ movie, rank }: Props) => {
     return (
-        <div className={`movie-card ${isWished(movie.id) ? 'wished' : ''}`}>
-            <img
-                src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-                alt={movie.title}
-            />
+        <div className="movieCard">
+            {/* TOP10 숫자 */}
+            {typeof rank === 'number' && (
+                <span className="movieRank">{rank}</span>
+            )}
 
-            <div className="movie-overlay">
-                <h4>{movie.title}</h4>
-                <button
-                    onClick={() =>
-                        toggleWishlist({
-                            id: movie.id,
-                            title: movie.title,
-                            poster_path: movie.poster_path,
-                        })
+            <Link to={`/movie/${movie.id}`}>
+                <img
+                    src={
+                        movie.poster_path
+                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                            : '/no-image.png'
                     }
-                >
-                    {isWished(movie.id) ? '♥ 찜 해제' : '♡ 찜'}
-                </button>
-            </div>
+                    alt={movie.title}
+                />
+            </Link>
         </div>
     );
 };
