@@ -8,6 +8,7 @@ type SortOption = 'popular' | 'rating';
 type ViewOption = 'grid' | 'table';
 
 const PAGE_SIZE = 20;
+const MAX_PAGE_BUTTONS = 5;
 
 export default function Popular() {
     const [movies, setMovies] = useState<Movie[]>([]);
@@ -16,6 +17,7 @@ export default function Popular() {
     const [view, setView] = useState<ViewOption>('grid');
 
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -33,7 +35,9 @@ export default function Popular() {
                         ? await getTrendingMoviesDay(page)
                         : await getTrendingMoviesWeek(page);
 
-                const results = res.data.results;
+                const results: Movie[] = res.data.results;
+
+                setTotalPages(res.data.total_pages);
 
                 if (view === 'grid') {
                     setMovies((prev) => [...prev, ...results]);
@@ -41,7 +45,7 @@ export default function Popular() {
                     setMovies(results);
                 }
 
-                setHasMore(results.length === PAGE_SIZE);
+                setHasMore(page < res.data.total_pages);
             } catch (e) {
                 console.error(e);
             } finally {
@@ -49,7 +53,7 @@ export default function Popular() {
             }
         };
 
-        fetchMovies();
+        void fetchMovies();
     }, [period, page, view]);
 
     /* =========================
@@ -94,6 +98,26 @@ export default function Popular() {
         }
         return movies;
     }, [movies, sort]);
+
+    /* =========================
+       Pagination 번호 계산
+    ========================= */
+    const getPageNumbers = (): number[] => {
+        let start = Math.max(1, page - Math.floor(MAX_PAGE_BUTTONS / 2));
+        let end = start + MAX_PAGE_BUTTONS - 1;
+
+        if (end > totalPages) {
+            end = totalPages;
+            start = Math.max(1, end - MAX_PAGE_BUTTONS + 1);
+        }
+
+        const pages: number[] = [];
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+
+        return pages;
+    };
 
     return (
         <section className="popular-page">
@@ -149,7 +173,7 @@ export default function Popular() {
                 </div>
             </header>
 
-            {/* Grid (Infinite Scroll) */}
+            {/* Grid View (Infinite Scroll) */}
             {view === 'grid' && (
                 <>
                     <div className="popular-grid">
@@ -183,7 +207,7 @@ export default function Popular() {
                 </>
             )}
 
-            {/* Table (Pagination) */}
+            {/* Table View (Pagination) */}
             {view === 'table' && (
                 <>
                     <table className="popular-table">
@@ -209,23 +233,44 @@ export default function Popular() {
                         </tbody>
                     </table>
 
+                    {/* Pagination */}
                     <div className="pagination">
                         <button
                             disabled={page === 1}
-                            onClick={() =>
-                                setPage((p) => p - 1)
-                            }
+                            onClick={() => setPage(1)}
                         >
-                            이전
+                            «
                         </button>
-                        <span>{page}</span>
+
                         <button
-                            disabled={!hasMore}
-                            onClick={() =>
-                                setPage((p) => p + 1)
-                            }
+                            disabled={page === 1}
+                            onClick={() => setPage(page - 1)}
                         >
-                            다음
+                            ‹
+                        </button>
+
+                        {getPageNumbers().map((p: number) => (
+                            <button
+                                key={p}
+                                className={p === page ? 'active' : ''}
+                                onClick={() => setPage(p)}
+                            >
+                                {p}
+                            </button>
+                        ))}
+
+                        <button
+                            disabled={page === totalPages}
+                            onClick={() => setPage(page + 1)}
+                        >
+                            ›
+                        </button>
+
+                        <button
+                            disabled={page === totalPages}
+                            onClick={() => setPage(totalPages)}
+                        >
+                            »
                         </button>
                     </div>
                 </>
