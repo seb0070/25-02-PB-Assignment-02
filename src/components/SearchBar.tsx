@@ -4,47 +4,69 @@ import './SearchBar.css';
 
 type Props = {
     initialValue?: string;
-    onSubmit: (query: string) => void;
     placeholder?: string;
+    onSubmit: (query: string) => void;
 };
 
-const SearchBar = ({ initialValue = '', onSubmit, placeholder = '검색' }: Props) => {
+const SearchBar = ({ initialValue = '', placeholder = '검색', onSubmit }: Props) => {
     const [value, setValue] = useState(initialValue);
+    const [open, setOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
-        setValue(initialValue);
+        if (initialValue !== value) {
+            setValue(initialValue);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialValue]);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        onSubmit(value.trim());
+        const q = value.trim();
+        if (!q) return;
+        onSubmit(q);
+        // 모바일에서는 검색 후 자동으로 접기
+        setOpen(false);
+    };
+
+    const toggleOpen = () => {
+        setOpen((v) => !v);
+        // 다음 tick에 포커스
+        setTimeout(() => inputRef.current?.focus(), 0);
     };
 
     return (
-        <form className="searchbar" onSubmit={handleSubmit} role="search" aria-label="검색">
-            <button
-                type="button"
-                className="searchbar__iconBtn"
-                aria-label="검색창 포커스"
-                onClick={() => inputRef.current?.focus()}
-            >
+        <div className={`sb ${open ? 'sb--open' : ''}`}>
+            {/* 모바일용: 아이콘 버튼 */}
+            <button type="button" className="sb__iconBtn" aria-label="검색" onClick={toggleOpen}>
                 🔍
             </button>
 
-            <input
-                ref={inputRef}
-                className="searchbar__input"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder={placeholder}
-                aria-label="검색어 입력"
-            />
+            {/* 데스크탑/열림 상태: 폼 */}
+            <form className="sb__form" onSubmit={handleSubmit} role="search" aria-label="검색">
+                <input
+                    ref={inputRef}
+                    className="sb__input"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder={placeholder}
+                    aria-label="검색어 입력"
+                />
+                <button type="submit" className="sb__submitBtn">
+                    검색
+                </button>
+            </form>
 
-            <button type="submit" className="searchbar__submitBtn">
-                검색
-            </button>
-        </form>
+            {/* 열려있을 때 바깥 클릭/닫기 버튼 */}
+            {open && (
+                <button
+                    type="button"
+                    className="sb__backdrop"
+                    aria-label="검색 닫기"
+                    onClick={() => setOpen(false)}
+                />
+            )}
+        </div>
     );
 };
 

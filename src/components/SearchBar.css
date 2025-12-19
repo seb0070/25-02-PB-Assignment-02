@@ -1,38 +1,40 @@
-.searchbar {
+.sb {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.searchbar:focus-within {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.18);
-}
-
-.searchbar__iconBtn {
+/* 아이콘 버튼은 항상 보이게(넷플릭스 느낌) */
+.sb__iconBtn {
     border: 0;
     background: transparent;
     color: white;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1;
-    padding: 6px;
+    padding: 8px;
     border-radius: 999px;
 }
 
-.searchbar__iconBtn:hover {
+.sb__iconBtn:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
-.searchbar__input {
+/* 폼은 기본: 데스크탑에서만 보이게 */
+.sb__form {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.sb__input {
     width: 220px;
-    max-width: 36vw;
+    max-width: 38vw;
     border: 0;
     outline: none;
     background: transparent;
@@ -40,36 +42,52 @@
     font-size: 14px;
 }
 
-.searchbar__input::placeholder {
+.sb__input::placeholder {
     color: rgba(255, 255, 255, 0.55);
 }
 
-.searchbar__submitBtn {
+.sb__submitBtn {
     border: 0;
     cursor: pointer;
     border-radius: 999px;
     padding: 6px 10px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     background: rgba(255, 255, 255, 0.12);
     color: white;
-    transition: transform 0.06s ease, background 0.2s ease;
     white-space: nowrap;
 }
 
-.searchbar__submitBtn:hover {
+.sb__submitBtn:hover {
     background: rgba(255, 255, 255, 0.18);
 }
 
-.searchbar__submitBtn:active {
-    transform: translateY(1px);
+/* 모바일에서 열렸을 때: 상단에 겹치지 않게 "풀폭 입력"을 띄움 */
+.sb--open .sb__form {
+    display: flex;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 64px; /* Header 높이에 맞춰 필요시 조절 */
+    z-index: 1001;
 }
 
-@media (max-width: 640px) {
-    .searchbar__input {
-        width: 140px;
+.sb__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    border: 0;
+    background: rgba(0, 0, 0, 0.55);
+    cursor: default;
+}
+
+/* 태블릿/데스크탑: 폼을 항상 표시 */
+@media (min-width: 768px) {
+    .sb__form {
+        display: flex;
+        position: static;
     }
-    .searchbar__submitBtn {
+    .sb__backdrop {
         display: none;
     }
 }

@@ -1,115 +1,97 @@
 import { useEffect, useState } from 'react';
-import { searchMovies } from '../api/movies';
+import { useSearchParams } from 'react-router-dom';
+import { getPopularMovies, searchMovies } from '../api/movies';
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
-import { storage } from '../utils/storage';
-import { STORAGE_KEYS } from '../constants/storageKeys';
+import './Search.css';
 
-const Search = () => {
-    const [query, setQuery] = useState('');
+const SearchPage = () => {
+    const [params, setParams] = useSearchParams();
+    const query = params.get('q') ?? '';
+
+    const [input, setInput] = useState<string>(query);
     const [movies, setMovies] = useState<Movie[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
-    const [recentSearches, setRecentSearches] = useState<string[]>(
-        storage.get<string[]>(STORAGE_KEYS.RECENT_SEARCHES, []) ?? []
-    );
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSearch = async (reset = true) => {
-        if (!query.trim()) return;
+    // URL query가 바뀌면 input도 동기화 (단, ESLint set-state-in-effect 피하려고 한 틱 미룸)
+    useEffect(() => {
+        const id = requestAnimationFrame(() => {
+            setInput(query);
+        });
+        return () => cancelAnimationFrame(id);
+    }, [query]);
 
-        setLoading(true);
-        try {
-            const res = await searchMovies(query, page);
-            setMovies((prev) =>
-                reset ? res.data.results : [...prev, ...res.data.results]
-            );
+    // 검색 전: 인기 영화 추천 / 검색 후: 검색 결과
+    useEffect(() => {
+        const id = requestAnimationFrame(() => {
+            const fetch = async () => {
+                setLoading(true);
+                try {
+                    if (!query.trim()) {
+                        const res = await getPopularMovies(1);
+                        setMovies(res.data.results);
+                    } else {
+                        const res = await searchMovies(query.trim(), 1);
+                        setMovies(res.data.results);
+                    }
+                } catch (e) {
+                    console.error('TMDB API error', e);
+                    setMovies([]);
+                } finally {
+                    setLoading(false);
+                }
+            };
 
-            if (reset) {
-                const updated = [
-                    query,
-                    ...recentSearches.filter((q) => q !== query),
-                ].slice(0, 5);
+            fetch();
+        });
 
-                setRecentSearches(updated);
-                storage.set(STORAGE_KEYS.RECENT_SEARCHES, updated);
-            }
+        return () => cancelAnimationFrame(id);
+    }, [query]);
 
-        } catch (e) {
-            console.error('Search API error', e);
-        } finally {
-            setLoading(false);
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const q = input.trim();
+        if (!q) {
+            // 빈 검색이면 q 파라미터 제거(= 추천 콘텐츠 상태)
+            setParams({});
+            return;
         }
+        setParams({ q });
     };
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const nearBottom =
-                window.innerHeight + window.scrollY >=
-                document.body.offsetHeight - 300;
-
-            if (nearBottom && !loading && query) {
-                setPage((prev) => prev + 1);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [loading, query]);
-
-    useEffect(() => {
-        if (page > 1) {
-            handleSearch(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+    const title = query.trim() ? `“${query}” 검색 결과` : '추천 콘텐츠';
 
     return (
-        <div>
-            <h2>영화 검색</h2>
+        <main className="searchPage">
+            <form className="searchForm" onSubmit={handleSubmit}>
+                <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="제목, 배우, 장르를 검색해보세요"
+                    aria-label="검색어 입력"
+                />
+                <button type="submit">검색</button>
+            </form>
 
-            <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="영화 제목 검색"
-            />
-            <button
-                onClick={() => {
-                    setMovies([]);
-                    setPage(1);
-                    handleSearch(true);
-                }}
-            >
-                검색
-            </button>
+            <section className="searchContent">
+                <h2>{title}</h2>
 
-
-            {recentSearches.length > 0 && (
-                <div>
-                    <strong>최근 검색어:</strong>
-                    {recentSearches.map((word) => (
-                        <button
-                            key={word}
-                            onClick={() => {
-                                setQuery(word);
-                                setPage(1);
-                                handleSearch(true);
-                            }}
-                        >
-                            {word}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            {loading && <p>로딩 중...</p>}
-
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                {movies.map((movie) => (
-                    <MovieCard key={movie.id} movie={movie} />
-                ))}
-            </div>
-        </div>
+                {loading ? (
+                    <p className="loading">불러오는 중...</p>
+                ) : movies.length === 0 ? (
+                    <p className="empty">
+                        {query.trim() ? '검색 결과가 없어요.' : '추천 콘텐츠를 불러오지 못했어요.'}
+                    </p>
+                ) : (
+                    <div className="movieGrid">
+                        {movies.map((movie) => (
+                            <MovieCard key={movie.id} movie={movie} />
+                        ))}
+                    </div>
+                )}
+            </section>
+        </main>
     );
 };
 
-export default Search;
+export default SearchPage;

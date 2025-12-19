@@ -1,7 +1,6 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
-import SearchBar from './SearchBar';
 import './Header.css';
 
 type AuthState = {
@@ -11,8 +10,6 @@ type AuthState = {
 
 const Header = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-
     const auth = storage.get<AuthState | null>(STORAGE_KEYS.AUTH, null);
 
     const handleLogout = () => {
@@ -20,26 +17,14 @@ const Header = () => {
         navigate('/signin');
     };
 
-    const handleSearchSubmit = (q: string) => {
-        if (!q) return;
-
-        const target = `/search?q=${encodeURIComponent(q)}`;
-
-        if (location.pathname.startsWith('/search')) {
-            navigate(target, { replace: true });
-        } else {
-            navigate(target);
-        }
-    };
-
     return (
         <header className="header">
             <div className="header__left">
-                <div className="logo">
-                    <Link to="/">NETFLIX DEMO</Link>
-                </div>
+                <Link to="/" className="logo">
+                    NETFLIX DEMO
+                </Link>
 
-                <nav className="nav" aria-label="주요 메뉴">
+                <nav className="nav">
                     <Link to="/">Home</Link>
                     <Link to="/popular">Popular</Link>
                     <Link to="/wishlist">Wishlist</Link>
@@ -47,22 +32,27 @@ const Header = () => {
             </div>
 
             <div className="header__right">
-                <SearchBar onSubmit={handleSearchSubmit} placeholder="제목, 배우, 장르 검색" />
+                {/* 🔍 검색 아이콘만 */}
+                <button
+                    className="searchIcon"
+                    aria-label="검색"
+                    onClick={() => navigate('/search')}
+                >
+                    🔍
+                </button>
 
-                <div className="auth">
-                    {auth?.isLoggedIn ? (
-                        <>
-                            <span className="user">{auth.userId}</span>
-                            <button className="auth__btn" onClick={handleLogout}>
-                                로그아웃
-                            </button>
-                        </>
-                    ) : (
-                        <Link className="auth__link" to="/signin">
-                            로그인
-                        </Link>
-                    )}
-                </div>
+                {auth?.isLoggedIn ? (
+                    <>
+                        <span className="user">{auth.userId}</span>
+                        <button className="logoutBtn" onClick={handleLogout}>
+                            로그아웃
+                        </button>
+                    </>
+                ) : (
+                    <Link to="/signin" className="loginBtn">
+                        로그인
+                    </Link>
+                )}
             </div>
         </header>
     );
