@@ -24,10 +24,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
     };
 
     return (
-        <div
-            className={`movie-card ${wished ? 'wished' : ''}`}
-            onClick={handleInfo}
-        >
+        <div className="movie-card" onClick={handleInfo}>
             <img
                 src={
                     movie.poster_path
@@ -37,14 +34,18 @@ const MovieCard = ({ movie }: MovieCardProps) => {
                 alt={movie.title}
             />
 
-            <div className="overlay">
-                <div className="actions">
-                    <button onClick={handleWishlist}>
-                        {wished ? '❤️' : '🤍'}
-                    </button>
-                    <button onClick={handleInfo}>ℹ</button>
-                </div>
+            {/* ✅ 우측 하단 액션 아이콘 */}
+            <div className="card-actions">
+                <button onClick={handleInfo} aria-label="상세 정보">
+                    ℹ
+                </button>
+                <button onClick={handleWishlist} aria-label="찜하기">
+                    {wished ? '❤️' : '🤍'}
+                </button>
             </div>
+
+            {/* ✅ 찜 상태 고정 표시 (크기 변화 없음) */}
+            {wished && <div className="wish-indicator">❤️</div>}
         </div>
     );
 };

@@ -2,54 +2,43 @@
     position: relative;
     width: 150px;
     cursor: pointer;
-    transition: transform 0.3s ease;
 }
 
 .movie-card img {
     width: 100%;
     border-radius: 6px;
-    transition: transform 0.3s ease;
 }
 
-.movie-card:hover img {
-    transform: scale(1.08);
-}
-
-.movie-card.wished img {
-    outline: 3px solid #e50914;
-}
-
-.overlay {
+/* 우측 하단 액션 */
+.card-actions {
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    opacity: 0;
+    right: 8px;
+    bottom: 8px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s ease;
-    border-radius: 6px;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
-.movie-card:hover .overlay {
+.movie-card:hover .card-actions {
     opacity: 1;
 }
 
-.actions {
-    display: flex;
-    gap: 12px;
-}
-
-.actions button {
+.card-actions button {
     background: rgba(0, 0, 0, 0.7);
     border: none;
     color: white;
-    font-size: 18px;
-    padding: 8px 10px;
     border-radius: 50%;
+    padding: 6px;
     cursor: pointer;
 }
 
-.actions button:hover {
-    background: #e50914;
+/* 찜 상태 고정 표시 */
+.wish-indicator {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    font-size: 14px;
 }
+
+/* ❌ outline/border 금지 → 크기 변형 방지 */
