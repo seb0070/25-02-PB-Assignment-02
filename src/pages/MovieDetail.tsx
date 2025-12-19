@@ -1,66 +1,89 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMovieDetail } from '../api/movies';
-import type { MovieDetail } from '../models/movie';
+import type { Movie } from '../models/movie';
+import { getMovieDetail, getMovieVideos } from '../api/movies';
 import './MovieDetail.css';
 
-const MovieDetailPage = () => {
+const IMAGE_BASE = 'https://image.tmdb.org/t/p/original';
+
+type Video = {
+    key: string;
+    site: string;
+    type: string;
+};
+
+export default function MovieDetail() {
     const { id } = useParams();
-    const [movie, setMovie] = useState<MovieDetail | null>(null);
+    const [movie, setMovie] = useState<Movie | null>(null);
+    const [trailerKey, setTrailerKey] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!id) return;
 
-        const fetchMovie = async () => {
+        const fetch = async () => {
             try {
-                const response = await getMovieDetail(Number(id));
-                setMovie(response.data);
-            } catch (error) {
-                console.error(error);
+                const [movieRes, videoRes] = await Promise.all([
+                    getMovieDetail(Number(id)),
+                    getMovieVideos(Number(id)),
+                ]);
+
+                setMovie(movieRes.data);
+
+                const trailer = (videoRes.data.results as Video[]).find(
+                    (v) => v.site === 'YouTube' && v.type === 'Trailer'
+                );
+
+                if (trailer) {
+                    setTrailerKey(trailer.key);
+                }
+            } catch (e) {
+                console.error(e);
             } finally {
                 setLoading(false);
             }
         };
 
-        void fetchMovie();
+        fetch();
     }, [id]);
 
-    if (loading) {
-        return <div style={{ color: 'white' }}>로딩 중...</div>;
-    }
-
-    if (!movie) {
-        return <div style={{ color: 'white' }}>영화를 찾을 수 없습니다.</div>;
-    }
+    if (loading) return <div style={{ color: 'white' }}>로딩 중...</div>;
+    if (!movie) return <div style={{ color: 'white' }}>영화를 찾을 수 없습니다.</div>;
 
     return (
         <div className="movie-detail">
-            {/* 상단 Hero 영역 */}
-            <div
-                className="movie-detail-hero"
-                style={{
-                    backgroundImage: movie.backdrop_path
-                        ? `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`
-                        : 'none',
-                }}
-            >
-                <div className="overlay">
-                    <h1>{movie.title}</h1>
-                    <p className="overview">{movie.overview}</p>
-                </div>
+            {/* 🎬 상단: 예고편 or 배너 */}
+            <div className="movie-detail-hero">
+                {trailerKey ? (
+                    <iframe
+                        src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1`}
+                        title="Movie Trailer"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                    />
+                ) : (
+                    <div
+                        className="fallback-banner"
+                        style={{
+                            backgroundImage: movie.backdrop_path
+                                ? `url(${IMAGE_BASE}${movie.backdrop_path})`
+                                : 'none',
+                        }}
+                    />
+                )}
             </div>
 
-            {/* 하단 정보 영역 */}
+            {/* 🎞 정보 영역 */}
             <div className="movie-detail-info">
-                <p>⭐ 평점: {movie.vote_average}</p>
-                <p>📅 개봉일: {movie.release_date}</p>
-                <p>
-                    🎭 장르: {movie.genres.map((genre) => genre.name).join(', ')}
-                </p>
+                <h1>{movie.title}</h1>
+
+                <p className="overview">{movie.overview}</p>
+
+                <div className="meta">
+                    <span>⭐ {movie.vote_average}</span>
+                    <span>📅 {movie.release_date}</span>
+                </div>
             </div>
         </div>
     );
-};
-
-export default MovieDetailPage;
+}

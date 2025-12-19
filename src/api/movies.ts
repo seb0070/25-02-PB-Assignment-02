@@ -6,6 +6,12 @@ export const getMovieDetail = (movieId: number) => {
     return tmdbClient.get(`/movie/${movieId}`);
 };
 
+// 🎬 영화 예고편 조회
+export const getMovieVideos = (movieId: number) => {
+    return tmdbClient.get(`/movie/${movieId}/videos`);
+};
+
+
 // 인기 영화
 export const getPopularMovies = (page = 1) => {
     return tmdbClient.get('/movie/popular', {
