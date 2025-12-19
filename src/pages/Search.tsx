@@ -105,7 +105,12 @@ const Search = () => {
     };
 
     const hasAnyFilter = () =>
-        Object.values(filters).some((v) => String(v).trim().length > 0);
+        Boolean(
+            filters.genre ||
+            filters.language ||
+            filters.releasePeriod ||
+            filters.rating
+        );
 
     /* =======================
        검색 실행
@@ -118,7 +123,7 @@ const Search = () => {
         setResults([]);
 
         try {
-            // 검색어만
+            // ✅ 검색어만 → searchMulti
             if (hasQuery && !hasFilter) {
                 saveRecentSearch(query);
                 const res = await searchMulti(query);
@@ -126,25 +131,30 @@ const Search = () => {
                 return;
             }
 
-            // 필터만 / 검색어 + 필터
+            // ✅ 필터만 / 검색어 + 필터 → discover
             if (hasFilter) {
                 if (hasQuery) saveRecentSearch(query);
 
                 const res = await discoverMovies({
                     genre: filters.genre || undefined,
                     language: filters.language || undefined,
-                    sort: filters.sort,
+                    sort: filters.sort, // 정렬만 여기서 사용
                     voteGte: filters.rating ? Number(filters.rating) : undefined,
                     releaseDateGte: getReleaseDate(filters.releasePeriod),
                     page: 1,
                 });
 
                 setResults((res.data?.results ?? []) as ResultItem[]);
+                return;
             }
+
+            // ❗ 아무것도 없으면 결과 비움
+            setResults([]);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const getPosterUrl = (path: string | null, size: 'w185' | 'w342') =>
         path ? `https://image.tmdb.org/t/p/${size}${path}` : '';
