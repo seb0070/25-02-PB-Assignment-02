@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { getTrendingMoviesDay, getTrendingMoviesWeek } from '../api/movies';
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
+import { BsGrid3X3Gap, BsList } from 'react-icons/bs';
 import './Popular.css';
 
 type SortOption = 'popular' | 'rating';
@@ -12,7 +13,7 @@ const MAX_PAGE_BUTTONS = 5;
 
 export default function Popular() {
     const [movies, setMovies] = useState<Movie[]>([]);
-    const [period, setPeriod] = useState<'day' | 'week'>('week');
+    const [period, setPeriod] = useState<'day' | 'week'>('day');
     const [sort, setSort] = useState<SortOption>('popular');
     const [view, setView] = useState<ViewOption>('grid');
 
@@ -23,9 +24,9 @@ export default function Popular() {
 
     const loaderRef = useRef<HTMLDivElement | null>(null);
 
-    /* =========================
-       데이터 Fetch
-    ========================= */
+    /* ===============================
+       데이터 로딩
+    =============================== */
     useEffect(() => {
         const fetchMovies = async () => {
             setLoading(true);
@@ -55,7 +56,7 @@ export default function Popular() {
         void fetchMovies();
     }, [period, page, view]);
 
-    /* View / Period 변경 시 초기화 */
+    /* 기준 / 뷰 변경 시 초기화 */
     useEffect(() => {
         setPage(1);
         setMovies([]);
@@ -87,8 +88,8 @@ export default function Popular() {
         return movies;
     }, [movies, sort]);
 
-    /* Pagination 번호 */
-    const getPageNumbers = (): number[] => {
+    /* Table pagination 번호 */
+    const getPageNumbers = () => {
         let start = Math.max(1, page - Math.floor(MAX_PAGE_BUTTONS / 2));
         let end = start + MAX_PAGE_BUTTONS - 1;
 
@@ -140,16 +141,16 @@ export default function Popular() {
                             <button
                                 className={`icon-btn ${view === 'grid' ? 'active' : ''}`}
                                 onClick={() => setView('grid')}
-                                title="그리드 뷰"
+                                title="그리드 보기"
                             >
-                                ⬛
+                                <BsGrid3X3Gap />
                             </button>
                             <button
                                 className={`icon-btn ${view === 'table' ? 'active' : ''}`}
                                 onClick={() => setView('table')}
-                                title="테이블 뷰"
+                                title="목록 보기"
                             >
-                                📋
+                                <BsList />
                             </button>
                         </div>
                     </div>
@@ -246,7 +247,7 @@ export default function Popular() {
                 }
                 aria-label="맨 위로"
             >
-                ▲
+                ^
             </button>
         </section>
     );
