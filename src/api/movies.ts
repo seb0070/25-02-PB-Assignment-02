@@ -24,6 +24,16 @@ export const getTopRatedMovies = (page = 1) => {
     });
 };
 
+export const getNowPlayingMovies = (page?: number) => {
+    return tmdbClient.get('/movie/now-playing', {
+        params: {
+            api_key: API_KEY,
+            language: ':ko-KR',
+            page,
+        }
+    });
+};
+
 // 개봉 예정 영화
 export const getUpcomingMovies = (page = 1) => {
     return tmdbClient.get('/movie/upcoming', {

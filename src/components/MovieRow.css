@@ -1,0 +1,44 @@
+.row {
+    padding: 18px 24px;
+}
+
+.row-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.row-title {
+    margin: 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.row-loading {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.row-slider {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scroll-behavior: smooth;
+}
+
+.row-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.row-item {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 600px) {
+    .row {
+        padding: 14px 14px;
+    }
+}
