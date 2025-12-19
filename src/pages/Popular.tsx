@@ -1,24 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getTrendingMoviesDay, getTrendingMoviesWeek } from '../api/movies';
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
 import './Popular.css';
 
+type SortOption = 'popular' | 'rating';
+type ViewOption = 'grid' | 'table';
+
+const PAGE_SIZE = 20;
+
 export default function Popular() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [period, setPeriod] = useState<'day' | 'week'>('week');
+    const [sort, setSort] = useState<SortOption>('popular');
+    const [view, setView] = useState<ViewOption>('grid');
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
+    const loaderRef = useRef<HTMLDivElement | null>(null);
+
+    /* =========================
+       데이터 Fetch
+    ========================= */
     useEffect(() => {
         const fetchMovies = async () => {
             setLoading(true);
             try {
                 const res =
                     period === 'day'
-                        ? await getTrendingMoviesDay()
-                        : await getTrendingMoviesWeek();
+                        ? await getTrendingMoviesDay(page)
+                        : await getTrendingMoviesWeek(page);
 
-                setMovies(res.data.results);
+                const results = res.data.results;
+
+                if (view === 'grid') {
+                    setMovies((prev) => [...prev, ...results]);
+                } else {
+                    setMovies(results);
+                }
+
+                setHasMore(results.length === PAGE_SIZE);
             } catch (e) {
                 console.error(e);
             } finally {
@@ -26,43 +49,186 @@ export default function Popular() {
             }
         };
 
-        void fetchMovies();
-    }, [period]);
+        fetchMovies();
+    }, [period, page, view]);
+
+    /* =========================
+       View / Period 변경 시 초기화
+    ========================= */
+    useEffect(() => {
+        setPage(1);
+        setMovies([]);
+        setHasMore(true);
+    }, [period, view]);
+
+    /* =========================
+       Infinite Scroll
+    ========================= */
+    useEffect(() => {
+        if (view !== 'grid' || !hasMore) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && !loading) {
+                    setPage((prev) => prev + 1);
+                }
+            },
+            { threshold: 1 }
+        );
+
+        if (loaderRef.current) {
+            observer.observe(loaderRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [view, hasMore, loading]);
+
+    /* =========================
+       정렬 (트렌드 해석)
+    ========================= */
+    const sortedMovies = useMemo(() => {
+        if (sort === 'rating') {
+            return [...movies].sort(
+                (a, b) => b.vote_average - a.vote_average
+            );
+        }
+        return movies;
+    }, [movies, sort]);
 
     return (
-        <section className="row">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <h2 style={{ margin: 0 }}>
+        <section className="popular-page">
+            {/* 헤더 */}
+            <header className="popular-header">
+                <h2>
                     🔥 {period === 'day' ? '오늘' : '이번 주'} 대세 콘텐츠
                 </h2>
 
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-                    <button
-                        onClick={() => setPeriod('day')}
-                        aria-pressed={period === 'day'}
-                    >
-                        오늘
-                    </button>
-                    <button
-                        onClick={() => setPeriod('week')}
-                        aria-pressed={period === 'week'}
-                    >
-                        이번주
-                    </button>
-                </div>
-            </div>
+                <div className="popular-controls">
+                    {/* 기간 */}
+                    <div className="control-group">
+                        <button
+                            className={period === 'day' ? 'active' : ''}
+                            onClick={() => setPeriod('day')}
+                        >
+                            오늘
+                        </button>
+                        <button
+                            className={period === 'week' ? 'active' : ''}
+                            onClick={() => setPeriod('week')}
+                        >
+                            이번주
+                        </button>
+                    </div>
 
-            {loading && <p style={{ marginTop: 12 }}>Loading...</p>}
+                    {/* 정렬 */}
+                    <select
+                        value={sort}
+                        onChange={(e) =>
+                            setSort(e.target.value as SortOption)
+                        }
+                    >
+                        <option value="popular">인기순</option>
+                        <option value="rating">평점순</option>
+                    </select>
 
-            {!loading && (
-                <div className="row-slider">
-                    {movies.map((movie, idx) => (
-                        <div key={movie.id} className="popular-item">
-                            <span className="popular-rank">{idx + 1}</span>
-                            <MovieCard movie={movie} />
-                        </div>
-                    ))}
+                    {/* View */}
+                    <div className="view-toggle">
+                        <button
+                            className={view === 'grid' ? 'active' : ''}
+                            onClick={() => setView('grid')}
+                        >
+                            ⬛
+                        </button>
+                        <button
+                            className={view === 'table' ? 'active' : ''}
+                            onClick={() => setView('table')}
+                        >
+                            📋
+                        </button>
+                    </div>
                 </div>
+            </header>
+
+            {/* Grid (Infinite Scroll) */}
+            {view === 'grid' && (
+                <>
+                    <div className="popular-grid">
+                        {sortedMovies.map((movie, idx) => (
+                            <div
+                                key={movie.id}
+                                className="popular-grid-item"
+                            >
+                                <span className="popular-rank">
+                                    {idx + 1}
+                                </span>
+                                <MovieCard movie={movie} />
+                            </div>
+                        ))}
+                    </div>
+
+                    {loading && <p>Loading...</p>}
+                    {hasMore && <div ref={loaderRef} style={{ height: 1 }} />}
+
+                    <button
+                        className="top-button"
+                        onClick={() =>
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth',
+                            })
+                        }
+                    >
+                        Top
+                    </button>
+                </>
+            )}
+
+            {/* Table (Pagination) */}
+            {view === 'table' && (
+                <>
+                    <table className="popular-table">
+                        <thead>
+                        <tr>
+                            <th>랭킹</th>
+                            <th>제목</th>
+                            <th>평점</th>
+                            <th>개봉일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {sortedMovies.map((movie, idx) => (
+                            <tr key={movie.id}>
+                                <td>
+                                    {(page - 1) * PAGE_SIZE + idx + 1}
+                                </td>
+                                <td>{movie.title}</td>
+                                <td>{movie.vote_average}</td>
+                                <td>{movie.release_date}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+
+                    <div className="pagination">
+                        <button
+                            disabled={page === 1}
+                            onClick={() =>
+                                setPage((p) => p - 1)
+                            }
+                        >
+                            이전
+                        </button>
+                        <span>{page}</span>
+                        <button
+                            disabled={!hasMore}
+                            onClick={() =>
+                                setPage((p) => p + 1)
+                            }
+                        >
+                            다음
+                        </button>
+                    </div>
+                </>
             )}
         </section>
     );

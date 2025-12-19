@@ -1,35 +1,82 @@
-.row {
+.popular-page {
     padding: 24px;
 }
 
-.row h2 {
-    margin-bottom: 12px;
-    color: #fff; /* 라이트모드 대응 */
-}
-
-.row-slider {
+/* 헤더 */
+.popular-header {
     display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.popular-header h2 {
+    margin: 0;
+}
+
+.popular-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
     gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 12px;
-    scroll-behavior: smooth;
 }
 
-.row-slider::-webkit-scrollbar {
-    display: none;
+.control-group button,
+.view-toggle button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
 }
 
-.popular-item {
+.control-group button.active,
+.view-toggle button.active {
+    background: #5b5fff;
+}
+
+select {
+    padding: 6px;
+    border-radius: 6px;
+}
+
+/* ✅ 진짜 Grid */
+.popular-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(180px, 1fr)
+    );
+    gap: 20px;
+}
+
+.popular-grid-item {
     position: relative;
 }
 
+/* 랭킹 오버레이 */
 .popular-rank {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 6px;
+    left: 6px;
     z-index: 2;
-    font-size: 32px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Table */
+.popular-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.popular-table th,
+.popular-table td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    text-align: left;
 }

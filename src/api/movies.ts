@@ -2,15 +2,31 @@ import tmdbClient from './tmdbClient';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
+/* =========================
+   Movie Detail
+========================= */
 export const getMovieDetail = (movieId: number) => {
-    return tmdbClient.get(`/movie/${movieId}`);
+    return tmdbClient.get(`/movie/${movieId}`, {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+        },
+    });
 };
 
 // 🎬 영화 예고편 조회
 export const getMovieVideos = (movieId: number) => {
-    return tmdbClient.get(`/movie/${movieId}/videos`);
+    return tmdbClient.get(`/movie/${movieId}/videos`, {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+        },
+    });
 };
 
+/* =========================
+   Movie Lists
+========================= */
 
 // 인기 영화
 export const getPopularMovies = (page = 1) => {
@@ -34,13 +50,14 @@ export const getTopRatedMovies = (page = 1) => {
     });
 };
 
-export const getNowPlayingMovies = (page?: number) => {
+// 현재 상영 중
+export const getNowPlayingMovies = (page = 1) => {
     return tmdbClient.get('/movie/now_playing', {
         params: {
             api_key: API_KEY,
-            language: ':ko-KR',
+            language: 'ko-KR',
             page,
-        }
+        },
     });
 };
 
@@ -55,25 +72,35 @@ export const getUpcomingMovies = (page = 1) => {
     });
 };
 
-// 🔥 오늘의 트렌딩 (Search / Popular / Home에서 공통 사용)
-export const getTrendingMoviesDay = () => {
+/* =========================
+   🔥 Trending (중요)
+========================= */
+
+// 🔥 오늘의 트렌딩
+export const getTrendingMoviesDay = (page = 1) => {
     return tmdbClient.get('/trending/movie/day', {
         params: {
             api_key: API_KEY,
             language: 'ko-KR',
+            page,
         },
     });
 };
 
 // 🔥 이번 주 트렌딩
-export const getTrendingMoviesWeek = () => {
+export const getTrendingMoviesWeek = (page = 1) => {
     return tmdbClient.get('/trending/movie/week', {
         params: {
             api_key: API_KEY,
             language: 'ko-KR',
+            page,
         },
     });
 };
+
+/* =========================
+   🔍 Search
+========================= */
 
 // 🔍 멀티 검색 (영화 + 인물 + TV)
 export const searchMulti = (query: string, page = 1) => {
