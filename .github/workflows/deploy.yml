@@ -21,9 +21,14 @@ jobs:
           node-version: 20
 
       - run: npm ci
-      - run: npm run build
 
-      # 🔴 이 줄이 없으면 접속 안 됨
+      - name: Build
+        run: npm run build
+        env:
+          VITE_TMDB_API_KEY: ${{ secrets.VITE_TMDB_API_KEY }}
+          VITE_TMDB_BASE_URL: https://api.themoviedb.org/3
+          VITE_TMDB_IMAGE_BASE_URL: https://image.tmdb.org/t/p
+
       - name: SPA fallback
         run: cp dist/index.html dist/404.html
 
