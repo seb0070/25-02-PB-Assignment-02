@@ -1,47 +1,59 @@
-import axios from 'axios';
+import tmdbClient from './tmdbClient';
 
-const BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-const client = axios.create({
-    baseURL: BASE_URL,
-    params: {
-        api_key: API_KEY,
-        language: 'ko-KR',
-    },
-});
-
-/* =========================
-   공통 Movie API
-========================= */
-
-export const getPopularMovies = (page = 1) =>
-    client.get('/movie/popular', { params: { page } });
-
-export const getTopRatedMovies = (page = 1) =>
-    client.get('/movie/top_rated', { params: { page } });
-
-export const getTrendingMoviesDay = () =>
-    client.get('/trending/movie/day');
-
-export const getTrendingMoviesWeek = (page = 1) =>
-    client.get('/trending/movie/week', { params: { page } });
-
-/* =========================
-   🔍 Search 전용 API
-========================= */
-
-/**
- * Multi Search
- * - movie
- * - tv
- * - person
- */
-export const searchMulti = (query: string, page = 1) =>
-    client.get('/search/multi', {
+// 인기 영화
+export const getPopularMovies = (page = 1) => {
+    return tmdbClient.get('/movie/popular', {
         params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+            page,
+        },
+    });
+};
+
+// 평점 높은 영화
+export const getTopRatedMovies = (page = 1) => {
+    return tmdbClient.get('/movie/top_rated', {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+            page,
+        },
+    });
+};
+
+// 개봉 예정 영화
+export const getUpcomingMovies = (page = 1) => {
+    return tmdbClient.get('/movie/upcoming', {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+            page,
+        },
+    });
+};
+
+// 🔥 오늘의 트렌딩 (Search / Popular / Home에서 공통 사용)
+export const getTrendingMoviesDay = () => {
+    return tmdbClient.get('/trending/movie/day', {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+        },
+    });
+};
+
+// 🔍 멀티 검색 (영화 + 인물 + TV)
+export const searchMulti = (query: string, page = 1) => {
+    return tmdbClient.get('/search/multi', {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
             query,
             page,
             include_adult: false,
         },
     });
+};

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { searchMulti, getTrendingMoviesDay } from '../api/movies';
-import MovieCard from '../components/MovieCard';
+import {
+    getTrendingMoviesDay,
+    searchMulti,
+} from '../api/movies';
 import type { Movie } from '../models/movie';
+import MovieCard from '../components/MovieCard';
 import './Search.css';
 
 type MultiResult = {
@@ -19,93 +22,76 @@ const SearchPage = () => {
     const query = params.get('q') ?? '';
 
     const [input, setInput] = useState(query);
-    const [movies, setMovies] = useState<Movie[]>([]);
+    const [results, setResults] = useState<MultiResult[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        setInput(query);
-    }, [query]);
-
-    useEffect(() => {
-        const fetch = async () => {
+        const fetchData = async () => {
             setLoading(true);
+
             try {
-                // 검색 전: 오늘의 트렌딩
-                if (!query.trim()) {
+                // 검색어 없으면 → 트렌딩
+                if (!query) {
                     const res = await getTrendingMoviesDay();
-                    setMovies(res.data.results);
-                    return;
+                    setResults(res.data.results);
+                } else {
+                    // 검색어 있으면 → 멀티 검색
+                    const res = await searchMulti(query);
+                    setResults(res.data.results);
                 }
-
-                // 🔍 Multi Search
-                const res = await searchMulti(query.trim());
-
-                // person → known_for 영화로 변환
-                const parsed: Movie[] = res.data.results.flatMap(
-                    (item: MultiResult) => {
-                        if (item.media_type === 'movie' && item.poster_path) {
-                            return item as unknown as Movie;
-                        }
-
-                        if (
-                            item.media_type === 'person' &&
-                            Array.isArray(item.known_for)
-                        ) {
-                            return item.known_for.filter((m) => m.poster_path);
-                        }
-
-                        return [];
-                    }
-                );
-
-                setMovies(parsed);
             } catch (e) {
-                console.error(e);
-                setMovies([]);
+                console.error('Search error', e);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetch();
+        fetchData();
     }, [query]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const q = input.trim();
-        if (!q) {
-            setParams({});
-            return;
-        }
-        setParams({ q });
+        setParams({ q: input });
     };
 
     return (
-        <main className="searchPage">
-            <form className="searchForm" onSubmit={handleSubmit}>
+        <main className="search-page">
+            <form className="search-form" onSubmit={handleSubmit}>
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="제목, 배우, 장르를 검색해보세요"
+                    placeholder="영화, 배우, 장르 검색"
                 />
                 <button type="submit">검색</button>
             </form>
 
-            <section className="searchContent">
-                <h2>
-                    {query ? `“${query}” 검색 결과` : '오늘의 트렌딩 콘텐츠'}
-                </h2>
+            {loading && <p>불러오는 중...</p>}
 
-                {loading ? (
-                    <p className="loading">불러오는 중...</p>
-                ) : (
-                    <div className="movieGrid">
-                        {movies.map((movie) => (
-                            <MovieCard key={movie.id} movie={movie} />
-                        ))}
-                    </div>
-                )}
-            </section>
+            <div className="search-grid">
+                {results.map((item) => {
+                    // 🎬 영화
+                    if (item.media_type === 'movie') {
+                        return (
+                            <MovieCard
+                                key={item.id}
+                                movie={item as unknown as Movie}
+                            />
+                        );
+                    }
+
+                    // 👤 인물 → 대표작
+                    if (item.media_type === 'person' && item.known_for?.[0]) {
+                        return (
+                            <MovieCard
+                                key={item.id}
+                                movie={item.known_for[0]}
+                            />
+                        );
+                    }
+
+                    return null;
+                })}
+            </div>
         </main>
     );
 };

@@ -1,0 +1,21 @@
+.row {
+    padding: 24px;
+}
+
+.row h2 {
+    margin-bottom: 12px;
+    color: #fff;
+    font-size: 20px;
+}
+
+.row-slider {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scroll-behavior: smooth;
+}
+
+.row-slider::-webkit-scrollbar {
+    display: none;
+}

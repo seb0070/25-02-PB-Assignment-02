@@ -1,37 +1,40 @@
 import { useEffect, useState } from 'react';
-import { getTrendingMoviesWeek } from '../api/movies';
-import MovieCard from '../components/MovieCard';
+import { getPopularMovies } from '../api/movies';
 import type { Movie } from '../models/movie';
+import MovieCard from '../components/MovieCard';
+import './Popular.css';
 
-const PopularPage = () => {
+const Popular = () => {
     const [movies, setMovies] = useState<Movie[]>([]);
-    const [page, setPage] = useState(1);
 
     useEffect(() => {
-        getTrendingMoviesWeek(page).then((res) => {
-            setMovies((prev) => [...prev, ...res.data.results]);
-        });
-    }, [page]);
+        const fetchMovies = async () => {
+            try {
+                const res = await getPopularMovies(1);
+                setMovies(res.data.results);
+            } catch (e) {
+                console.error('Popular API error', e);
+            }
+        };
+
+        fetchMovies();
+    }, []);
 
     return (
-        <main style={{ padding: '24px' }}>
-            <h1>이번 주 대세 콘텐츠</h1>
+        <section className="row">
+            <h2>이번 주 대세 콘텐츠</h2>
 
-            <div className="movieGrid">
+            <div className="row-slider">
                 {movies.map((movie, idx) => (
                     <MovieCard
-                        key={`${movie.id}-${idx}`}
+                        key={movie.id}
                         movie={movie}
-                        rank={idx + 1} // TOP10용
+                        rank={idx + 1}
                     />
                 ))}
             </div>
-
-            <button onClick={() => setPage((p) => p + 1)}>
-                더 보기
-            </button>
-        </main>
+        </section>
     );
 };
 
-export default PopularPage;
+export default Popular;

@@ -1,40 +1,70 @@
 import { useEffect, useState } from 'react';
-import { getPopularMovies } from '../api/movies';
+import {
+    getPopularMovies,
+    getTopRatedMovies,
+    getUpcomingMovies,
+} from '../api/movies';
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
+import './Home.css';
 
 const Home = () => {
-    const [movies, setMovies] = useState<Movie[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [popular, setPopular] = useState<Movie[]>([]);
+    const [topRated, setTopRated] = useState<Movie[]>([]);
+    const [upcoming, setUpcoming] = useState<Movie[]>([]);
 
     useEffect(() => {
-        const fetchMovies = async () => {
-            setLoading(true);
+        const fetchAll = async (): Promise<void> => {
             try {
-                const res = await getPopularMovies();
-                setMovies(res.data.results);
+                const [p, t, u] = await Promise.all([
+                    getPopularMovies(1),
+                    getTopRatedMovies(1),
+                    getUpcomingMovies(1),
+                ]);
+
+                setPopular(p.data.results);
+                setTopRated(t.data.results);
+                setUpcoming(u.data.results);
             } catch (e) {
-                console.error('TMDB API error', e);
-            } finally {
-                setLoading(false);
+                console.error(e);
             }
         };
 
-        fetchMovies();
+        fetchAll();
     }, []);
 
-    if (loading) return <p>로딩 중...</p>;
-
     return (
-        <div>
-            <h2>인기 영화</h2>
+        <>
+            {/* 인기 영화 */}
+            <section className="row">
+                <h2>인기 영화</h2>
+                <div className="row-slider">
+                    {popular.map((movie) => (
+                        <MovieCard key={movie.id} movie={movie} />
+                    ))}
+                </div>
+            </section>
 
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                {movies.map((movie) => (
-                    <MovieCard key={movie.id} movie={movie} />
-                ))}
-            </div>
-        </div>
+            {/* 평점 높은 영화 */}
+            <section className="row">
+                <h2>평점 높은 영화</h2>
+                <div className="row-slider">
+                    {topRated.map((movie) => (
+                        <MovieCard key={movie.id} movie={movie} />
+                    ))}
+                </div>
+            </section>
+
+            {/* 개봉 예정 */}
+            <section className="row">
+                <h2>개봉 예정작</h2>
+                <div className="row-slider">
+                    {upcoming.map((movie) => (
+                        <MovieCard key={movie.id} movie={movie} />
+                    ))}
+                </div>
+            </section>
+        </>
     );
 };
 

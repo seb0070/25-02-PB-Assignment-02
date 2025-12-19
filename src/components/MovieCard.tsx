@@ -1,32 +1,26 @@
-import { Link } from 'react-router-dom';
-import type { Movie } from '../models/movie';
 import './MovieCard.css';
+import type { Movie } from '../models/movie';
 
 type Props = {
     movie: Movie;
-    rank?: number; // ✅ 추가 (Popular에서만 사용)
+    rank?: number;
 };
 
-const MovieCard = ({ movie, rank }: Props) => {
-    return (
-        <div className="movieCard">
-            {/* TOP10 숫자 */}
-            {typeof rank === 'number' && (
-                <span className="movieRank">{rank}</span>
-            )}
+const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 
-            <Link to={`/movie/${movie.id}`}>
-                <img
-                    src={
-                        movie.poster_path
-                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                            : '/no-image.png'
-                    }
-                    alt={movie.title}
-                />
-            </Link>
+export default function MovieCard({ movie, rank }: Props) {
+    return (
+        <div className="movie-card">
+            {rank && <div className="movie-rank">{rank}</div>}
+
+            <img
+                src={
+                    movie.poster_path
+                        ? `${IMAGE_BASE}${movie.poster_path}`
+                        : '/no-image.png'
+                }
+                alt={movie.title}
+            />
         </div>
     );
-};
-
-export default MovieCard;
+}
