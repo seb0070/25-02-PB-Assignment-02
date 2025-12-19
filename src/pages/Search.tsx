@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './Search.css';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiX } from 'react-icons/fi';
 
 const RECENT_SEARCH_KEY = 'recent_searches';
 const MAX_RECENT = 5;
@@ -63,6 +63,16 @@ const Search = () => {
                             }
                         }}
                     />
+
+                    {query && (
+                        <button
+                            className="clear-button"
+                            onClick={() => setQuery('')}
+                            aria-label="검색어 삭제"
+                        >
+                            <FiX />
+                        </button>
+                    )}
 
                     {/* 🔍 검색 버튼 */}
                     <button

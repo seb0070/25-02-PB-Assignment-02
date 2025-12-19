@@ -44,6 +44,21 @@
     height: 20px;
 }
 
+.clear-button {
+    position: absolute;
+    right: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #777;
+    display: flex;
+    align-items: center;
+}
+
+.clear-button svg {
+    width: 18px;
+    height: 18px;
+}
 
 /* ===== 최근 검색어 ===== */
 .recent-searches {
