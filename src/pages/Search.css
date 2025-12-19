@@ -1,93 +1,109 @@
+:root {
+    --search-container-width: 1100px;
+}
+
+/* =========================
+   Page
+========================= */
+
 .search-page {
     padding: 80px 24px;
     color: #fff;
 }
 
-/* 검색바 */
+/* =========================
+   Search Input
+========================= */
+
 .search-input-wrapper {
-    position: relative;
     max-width: 900px;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .search-input {
-    width: 100%;
-    padding: 14px 70px 14px 16px;
-    border-radius: 10px;
-    border: 1px solid #333;
+    flex: 1;
+    height: 44px;
+    padding: 0 16px;
     background: #111;
+    border: 1px solid #333;
+    border-radius: 22px;
     color: #fff;
+    font-size: 14px;
 }
 
-.search-button,
-.clear-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+.search-input::placeholder {
+    color: #777;
+}
+
+.search-input-wrapper button {
     background: none;
     border: none;
-    cursor: pointer;
-    color: #bbb;
-}
-
-.clear-button {
-    right: 40px;
-}
-
-.search-button {
-    right: 12px;
-}
-
-/* 최근 검색어 */
-.recent-searches {
-    margin-top: 12px;
-    padding: 12px;
-    background-color: #111;
-    border: 1px solid #222;
-    border-radius: 10px;
-}
-
-.recent-searches::before {
-    content: '최근 검색어';
-    display: block;
-    margin-bottom: 8px;
-    font-size: 12px;
     color: #aaa;
+    cursor: pointer;
+}
+
+/* =========================
+   Recent Searches
+========================= */
+
+/* ❗ 박스 느낌 제거 */
+.recent-searches {
+    max-width: 900px;
+    margin: 12px auto 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.recent-searches-title {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 6px;
 }
 
 .recent-chip {
     display: inline-flex;
     align-items: center;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    background-color: #1a1a1a;
+    gap: 6px;
+    margin: 4px 6px 0 0;
+    padding: 6px 12px;
+    background: #1a1a1a;
     border: 1px solid #333;
     border-radius: 20px;
+    font-size: 13px;
+    color: #ddd;
+    opacity: 0.85;
 }
 
-.chip-text,
-.chip-remove {
+.recent-chip button {
     background: none;
     border: none;
-    color: #fff;
-    padding: 6px 10px;
+    color: #777;
     cursor: pointer;
 }
 
-.chip-remove {
-    color: #aaa;
-}
+/* =========================
+   Filter Section
+========================= */
 
-/* 필터 */
+/* ❗ 카드 → 툴바 느낌 */
 .filter-section {
     max-width: 900px;
-    margin: 30px auto 16px;
+    margin: 28px auto 0;
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 12px;
 }
 
 .filter-title {
-    margin-bottom: 10px;
     font-size: 14px;
-    color: #bbb;
+    color: #ccc;
+    margin-bottom: 10px;
+    opacity: 0.85;
 }
 
 .filters {
@@ -97,39 +113,58 @@
 }
 
 .filters select,
-.reset-button {
-    padding: 10px 12px;
-    border-radius: 8px;
+.filters button {
+    height: 38px;
+    padding: 0 12px;
+    background: #111;
     border: 1px solid #333;
-    background-color: #111;
-    color: #fff;
+    border-radius: 10px;
+    color: #eee;
+    font-size: 13px;
 }
 
-/* 정렬 */
-.sort-section {
-    max-width: 900px;
-    margin: 0 auto 24px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.sort-label {
-    font-size: 14px;
+.reset-button {
     color: #bbb;
 }
 
-.sort-select {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background-color: #111;
-    color: #fff;
+/* 힌트 문구는 최대한 약하게 */
+.filter-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #777;
 }
 
-/* 결과 */
+/* =========================
+   Sort
+========================= */
+
+/* ❗ 필터의 연장선처럼 */
+.sort-section {
+    max-width: 900px;
+    margin: 6px auto 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #aaa;
+    opacity: 0.75;
+}
+
+.sort-section select {
+    height: 34px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #ddd;
+}
+
+/* =========================
+   Results
+========================= */
+
 .search-results {
-    margin-top: 40px;
+    max-width: 1100px;
+    margin: 40px auto 0;
 }
 
 .result-grid {
@@ -138,35 +173,37 @@
     gap: 20px;
 }
 
-.movie-card img,
-.person-card img {
-    width: 100%;
-    border-radius: 8px;
+.movie-card {
+    cursor: pointer;
 }
 
-.img-placeholder {
+.movie-card img {
     width: 100%;
-    aspect-ratio: 2 / 3;
     border-radius: 8px;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #777;
 }
 
 .card-title {
     margin-top: 6px;
-    font-size: 14px;
+    font-size: 13px;
+    color: #ddd;
 }
 
-.known-for {
-    font-size: 12px;
-    color: #aaa;
-}
+/* =========================
+   Empty / Loading
+========================= */
 
 .empty-text {
+    margin-top: 40px;
     text-align: center;
+    font-size: 14px;
     color: #777;
+}
+
+.search-input-wrapper,
+.recent-searches,
+.filter-section,
+.sort-section {
+    max-width: var(--search-container-width);
+    margin-left: auto;
+    margin-right: auto;
 }
