@@ -34,6 +34,11 @@
     font-weight: 600;
 }
 
+.nav a.active {
+    color: #e50914;
+    font-weight: 600;
+}
+
 .header__right {
     display: flex;
     align-items: center;

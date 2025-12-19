@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 import './Header.css';
@@ -20,27 +20,19 @@ const Header = () => {
     return (
         <header className="header">
             <div className="header__left">
-                <Link to="/" className="logo">
+                <NavLink to="/" className="logo">
                     NETFLIX DEMO
-                </Link>
+                </NavLink>
 
                 <nav className="nav">
-                    <Link to="/">Home</Link>
-                    <Link to="/popular">Popular</Link>
-                    <Link to="/wishlist">Wishlist</Link>
+                    <NavLink to="/">Home</NavLink>
+                    <NavLink to="/search">Search</NavLink>
+                    <NavLink to="/popular">Popular</NavLink>
+                    <NavLink to="/wishlist">Wishlist</NavLink>
                 </nav>
             </div>
 
             <div className="header__right">
-                {/* 🔍 검색 아이콘만 */}
-                <button
-                    className="searchIcon"
-                    aria-label="검색"
-                    onClick={() => navigate('/search')}
-                >
-                    🔍
-                </button>
-
                 {auth?.isLoggedIn ? (
                     <>
                         <span className="user">{auth.userId}</span>
@@ -49,9 +41,9 @@ const Header = () => {
                         </button>
                     </>
                 ) : (
-                    <Link to="/signin" className="loginBtn">
+                    <NavLink to="/signin" className="loginBtn">
                         로그인
-                    </Link>
+                    </NavLink>
                 )}
             </div>
         </header>
