@@ -1,6 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
+import SearchBar from './SearchBar';
 import './Header.css';
 
 type AuthState = {
@@ -10,42 +11,61 @@ type AuthState = {
 
 const Header = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // ✅ defaultValue 꼭 넣기
     const auth = storage.get<AuthState | null>(STORAGE_KEYS.AUTH, null);
 
     const handleLogout = () => {
-        // ✅ remove가 없을 수 있으니 안전하게 처리
         storage.set(STORAGE_KEYS.AUTH, null);
         navigate('/signin');
     };
 
+    const handleSearchSubmit = (q: string) => {
+        if (!q) return;
+
+        const target = `/search?q=${encodeURIComponent(q)}`;
+
+        if (location.pathname.startsWith('/search')) {
+            navigate(target, { replace: true });
+        } else {
+            navigate(target);
+        }
+    };
+
     return (
         <header className="header">
-            <div className="logo">
-                <Link to="/">NETFLIX DEMO</Link>
+            <div className="header__left">
+                <div className="logo">
+                    <Link to="/">NETFLIX DEMO</Link>
+                </div>
+
+                <nav className="nav" aria-label="주요 메뉴">
+                    <Link to="/">Home</Link>
+                    <Link to="/popular">Popular</Link>
+                    <Link to="/wishlist">Wishlist</Link>
+                </nav>
             </div>
 
-            <nav className="nav">
-                <Link to="/">Home</Link>
-                <Link to="/popular">Popular</Link>
-                <Link to="/search">Search</Link>
-                <Link to="/wishlist">Wishlist</Link>
-            </nav>
+            <div className="header__right">
+                <SearchBar onSubmit={handleSearchSubmit} placeholder="제목, 배우, 장르 검색" />
 
-            <div className="auth">
-                {auth?.isLoggedIn ? (
-                    <>
-                        <span className="user">{auth.userId}</span>
-                        <button onClick={handleLogout}>로그아웃</button>
-                    </>
-                ) : (
-                    <Link to="/signin">로그인</Link>
-                )}
+                <div className="auth">
+                    {auth?.isLoggedIn ? (
+                        <>
+                            <span className="user">{auth.userId}</span>
+                            <button className="auth__btn" onClick={handleLogout}>
+                                로그아웃
+                            </button>
+                        </>
+                    ) : (
+                        <Link className="auth__link" to="/signin">
+                            로그인
+                        </Link>
+                    )}
+                </div>
             </div>
         </header>
     );
 };
 
 export default Header;
-
