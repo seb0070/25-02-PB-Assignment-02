@@ -5,32 +5,24 @@ import './MovieCard.css';
 
 interface MovieCardProps {
     movie: Movie;
-    onInfo?: (movie: Movie) => void;
 }
 
-const MovieCard = ({ movie, onInfo }: MovieCardProps) => {
+const MovieCard = ({ movie }: MovieCardProps) => {
     const navigate = useNavigate();
     const { isWished, toggleWishlist } = useWishlist();
-
     const wished = isWished(movie.id);
 
+    const handleCardClick = () => {
+        navigate(`/movie/${movie.id}`);
+    };
+
     const handleWishlist = (e: React.MouseEvent) => {
-        e.stopPropagation();
+        e.stopPropagation(); // 카드 클릭 방지
         toggleWishlist(movie);
     };
 
-    const handleInfo = (e: React.MouseEvent) => {
-        e.stopPropagation();
-
-        if (onInfo) {
-            onInfo(movie);
-        } else {
-            navigate(`/movie/${movie.id}`);
-        }
-    };
-
     return (
-        <div className="movie-card" onClick={handleInfo}>
+        <div className="movie-card" onClick={handleCardClick}>
             <img
                 src={
                     movie.poster_path
@@ -40,14 +32,14 @@ const MovieCard = ({ movie, onInfo }: MovieCardProps) => {
                 alt={movie.title}
             />
 
-            <div className="card-actions">
-                <button onClick={handleInfo}>ℹ</button>
-                <button onClick={handleWishlist}>
-                    {wished ? '❤️' : '🤍'}
-                </button>
-            </div>
-
-            {wished && <div className="wish-indicator">❤️</div>}
+            {/* ❤️ 찜 토글 (hover 시 노출) */}
+            <button
+                className={`wishlist-btn ${wished ? 'active' : ''}`}
+                onClick={handleWishlist}
+                aria-label="찜하기"
+            >
+                {wished ? '❤️' : '🤍'}
+            </button>
         </div>
     );
 };

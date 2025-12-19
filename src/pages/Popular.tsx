@@ -19,12 +19,12 @@ export default function Popular() {
 
             <div className="row-slider">
                 {movies.map((movie, idx) => (
-                    <MovieCard
-                        key={movie.id}
-                        movie={movie}
-                        rank={idx + 1}
-                    />
+                    <div key={movie.id} className="popular-item">
+                        <span className="popular-rank">{idx + 1}</span>
+                        <MovieCard movie={movie} />
+                    </div>
                 ))}
+
             </div>
         </section>
     );

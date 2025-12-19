@@ -1,44 +1,43 @@
 .movie-card {
     position: relative;
-    width: 150px;
+    width: 160px;
+    aspect-ratio: 2 / 3;     /* 🔥 포스터 비율 고정 */
+    overflow: hidden;
+    border-radius: 8px;
     cursor: pointer;
 }
 
 .movie-card img {
     width: 100%;
-    border-radius: 6px;
+    height: 100%;
+    object-fit: cover;       /* 🔥 이미지 크기 통일 핵심 */
+    display: block;
 }
 
-/* 우측 하단 액션 */
-.card-actions {
+/* ❤️ 찜 버튼 */
+.wishlist-btn {
     position: absolute;
     right: 8px;
     bottom: 8px;
-    display: flex;
-    gap: 6px;
+    background: none;      /* 🔥 배경 제거 */
+    border: none;
+    padding: 0;            /* 🔥 버튼 느낌 제거 */
+    font-size: 18px;
+    cursor: pointer;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.15s ease;
 }
 
-.movie-card:hover .card-actions {
+/* hover 시에만 노출 */
+.movie-card:hover .wishlist-btn {
     opacity: 1;
 }
 
-.card-actions button {
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    color: white;
-    border-radius: 50%;
-    padding: 6px;
-    cursor: pointer;
+/* 찜된 상태는 항상 표시해도 OK (선택) */
+.wishlist-btn.active {
+    opacity: 1;
 }
 
-/* 찜 상태 고정 표시 */
-.wish-indicator {
-    position: absolute;
-    left: 8px;
-    bottom: 8px;
-    font-size: 14px;
+.wishlist-btn:hover {
+    transform: scale(1.1);
 }
-
-/* ❌ outline/border 금지 → 크기 변형 방지 */

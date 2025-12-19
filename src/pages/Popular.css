@@ -18,3 +18,18 @@
 .row-slider::-webkit-scrollbar {
     display: none;
 }
+
+.popular-item {
+    position: relative;
+}
+
+.popular-rank {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+}
