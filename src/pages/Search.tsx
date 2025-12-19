@@ -12,7 +12,7 @@ type MediaType = 'movie' | 'person' | 'tv';
 type MovieLike = {
     id: number;
     title?: string;
-    name?: string; // tv는 name을 쓰는 경우가 있어서 안전하게
+    name?: string;
     poster_path: string | null;
     media_type?: MediaType;
 };
@@ -35,8 +35,10 @@ const getTitle = (item: MovieLike) => item.title ?? item.name ?? '';
 const Search = () => {
     const navigate = useNavigate();
 
+    /* =======================
+       상태
+    ======================= */
     const [query, setQuery] = useState('');
-    const [isFocused, setIsFocused] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const [recentSearches, setRecentSearches] = useState<string[]>(() => {
@@ -54,6 +56,9 @@ const Search = () => {
 
     const [results, setResults] = useState<ResultItem[]>([]);
 
+    /* =======================
+       최근 검색어
+    ======================= */
     const saveRecentSearch = (value: string) => {
         const v = value.trim();
         if (!v) return;
@@ -73,6 +78,9 @@ const Search = () => {
         localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updated));
     };
 
+    /* =======================
+       개봉 시기 변환
+    ======================= */
     const getReleaseDate = (period: string) => {
         if (!period) return undefined;
 
@@ -87,6 +95,9 @@ const Search = () => {
             case 'year':
                 today.setFullYear(today.getFullYear() - 1);
                 break;
+            case 'fiveYears':
+                today.setFullYear(today.getFullYear() - 5);
+                break;
             default:
                 return undefined;
         }
@@ -96,6 +107,9 @@ const Search = () => {
     const hasAnyFilter = () =>
         Object.values(filters).some((v) => String(v).trim().length > 0);
 
+    /* =======================
+       검색 실행
+    ======================= */
     const executeSearch = async () => {
         const hasQuery = query.trim().length > 0;
         const hasFilter = hasAnyFilter();
@@ -104,47 +118,40 @@ const Search = () => {
         setResults([]);
 
         try {
-            // 1) 검색어만 → searchMulti
+            // 검색어만
             if (hasQuery && !hasFilter) {
                 saveRecentSearch(query);
                 const res = await searchMulti(query);
-                const items = (res.data?.results ?? []) as ResultItem[];
-                setResults(items);
+                setResults((res.data?.results ?? []) as ResultItem[]);
                 return;
             }
 
-            // 2) 필터만 / 검색어+필터 → discover
+            // 필터만 / 검색어 + 필터
             if (hasFilter) {
                 if (hasQuery) saveRecentSearch(query);
 
                 const res = await discoverMovies({
                     genre: filters.genre || undefined,
                     language: filters.language || undefined,
-                    sort: filters.sort || 'popularity.desc',
+                    sort: filters.sort,
                     voteGte: filters.rating ? Number(filters.rating) : undefined,
                     releaseDateGte: getReleaseDate(filters.releasePeriod),
                     page: 1,
                 });
 
-                // discover/movie는 보통 media_type 없이 영화 배열이 옴
-                const items = (res.data?.results ?? []) as MovieLike[];
-                setResults(items);
-                return;
+                setResults((res.data?.results ?? []) as ResultItem[]);
             }
-
-            // 검색어도 없고 필터도 없으면: 결과 비움 유지
-            setResults([]);
         } finally {
             setIsLoading(false);
-            setIsFocused(false);
         }
     };
 
-    const getPosterUrl = (path: string | null, size: 'w185' | 'w342') => {
-        if (!path) return '';
-        return `https://image.tmdb.org/t/p/${size}${path}`;
-    };
+    const getPosterUrl = (path: string | null, size: 'w185' | 'w342') =>
+        path ? `https://image.tmdb.org/t/p/${size}${path}` : '';
 
+    /* =======================
+       JSX
+    ======================= */
     return (
         <main className="search-page">
             {/* 🔍 검색바 */}
@@ -155,7 +162,6 @@ const Search = () => {
                         value={query}
                         placeholder="영화, 배우, 장르를 검색해보세요"
                         onChange={(e) => setQuery(e.target.value)}
-                        onFocus={() => setIsFocused(true)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') void executeSearch();
                         }}
@@ -164,9 +170,8 @@ const Search = () => {
                     {query && (
                         <button
                             className="clear-button"
-                            onClick={() => setQuery('')}
-                            aria-label="검색어 삭제"
                             type="button"
+                            onClick={() => setQuery('')}
                         >
                             <FiX />
                         </button>
@@ -174,23 +179,22 @@ const Search = () => {
 
                     <button
                         className="search-button"
-                        onClick={() => void executeSearch()}
-                        aria-label="검색"
                         type="button"
+                        onClick={() => void executeSearch()}
                     >
                         <FiSearch />
                     </button>
                 </div>
 
-                {/* 최근 검색어 */}
-                {isFocused && recentSearches.length > 0 && (
+                {/* 🕘 최근 검색어 (항상 노출) */}
+                {recentSearches.length > 0 && (
                     <div className="recent-searches">
                         {recentSearches.map((item) => (
                             <div key={item} className="recent-chip">
                                 <button
                                     className="chip-text"
                                     type="button"
-                                    onMouseDown={() => {
+                                    onClick={() => {
                                         setQuery(item);
                                         void executeSearch();
                                     }}
@@ -200,10 +204,7 @@ const Search = () => {
                                 <button
                                     className="chip-remove"
                                     type="button"
-                                    onMouseDown={(e) => {
-                                        e.stopPropagation();
-                                        removeRecentSearch(item);
-                                    }}
+                                    onClick={() => removeRecentSearch(item)}
                                 >
                                     ×
                                 </button>
@@ -218,7 +219,6 @@ const Search = () => {
                 <p className="filter-title">선호하는 설정을 선택하세요</p>
 
                 <div className="filters">
-                    {/* 🎬 장르 */}
                     <select
                         value={filters.genre}
                         onChange={(e) =>
@@ -237,7 +237,6 @@ const Search = () => {
                         <option value="99">다큐멘터리</option>
                     </select>
 
-                    {/* 🌍 언어 */}
                     <select
                         value={filters.language}
                         onChange={(e) =>
@@ -250,10 +249,8 @@ const Search = () => {
                         <option value="ja">일본어</option>
                         <option value="zh">중국어</option>
                         <option value="fr">프랑스어</option>
-                        <option value="es">기타</option>
                     </select>
 
-                    {/* 📅 개봉 시기 */}
                     <select
                         value={filters.releasePeriod}
                         onChange={(e) =>
@@ -267,7 +264,6 @@ const Search = () => {
                         <option value="fiveYears">5년 이내</option>
                     </select>
 
-                    {/* ⭐ 평점 */}
                     <select
                         value={filters.rating}
                         onChange={(e) =>
@@ -279,7 +275,6 @@ const Search = () => {
                         <option value="8">8점 이상</option>
                     </select>
 
-                    {/* 🔄 초기화 */}
                     <button
                         className="reset-button"
                         type="button"
@@ -303,14 +298,15 @@ const Search = () => {
                 </p>
             </section>
 
-
             {/* 🔃 정렬 */}
             <section className="sort-section">
                 <span className="sort-label">정렬</span>
                 <select
                     className="sort-select"
                     value={filters.sort}
-                    onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
+                    onChange={(e) =>
+                        setFilters({ ...filters, sort: e.target.value })
+                    }
                 >
                     <option value="popularity.desc">인기순</option>
                     <option value="primary_release_date.desc">최신 개봉 순</option>
@@ -318,7 +314,7 @@ const Search = () => {
                 </select>
             </section>
 
-            {/* 📄 결과 */}
+            {/* 📄 검색 결과 */}
             <section className="search-results">
                 {isLoading && <p className="empty-text">검색 중...</p>}
 
@@ -328,12 +324,11 @@ const Search = () => {
 
                 <div className="result-grid">
                     {results.map((item) => {
-                        // 👤 인물
                         if (isPerson(item)) {
-                            const knownForTitles =
+                            const knownFor =
                                 item.known_for
                                     ?.map((k) => getTitle(k))
-                                    .filter((t) => t.trim().length > 0)
+                                    .filter(Boolean)
                                     .slice(0, 2) ?? [];
 
                             return (
@@ -346,30 +341,22 @@ const Search = () => {
                                     ) : (
                                         <div className="img-placeholder">No Image</div>
                                     )}
-
                                     <p className="card-title">{item.name}</p>
-
-                                    {knownForTitles.length > 0 && (
+                                    {knownFor.length > 0 && (
                                         <p className="known-for">
-                                            대표작: {knownForTitles.join(', ')}
+                                            대표작: {knownFor.join(', ')}
                                         </p>
                                     )}
                                 </div>
                             );
                         }
 
-                        // 🎬 영화/TV(Discover는 movie만 오지만 multi는 tv도 올 수 있음)
                         const title = getTitle(item);
                         return (
                             <div
                                 key={`media-${item.id}`}
                                 className="movie-card"
                                 onClick={() => navigate(`/movie/${item.id}`)}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') navigate(`/movie/${item.id}`);
-                                }}
                             >
                                 {item.poster_path ? (
                                     <img

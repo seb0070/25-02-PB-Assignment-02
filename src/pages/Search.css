@@ -28,9 +28,6 @@
     border: none;
     cursor: pointer;
     color: #bbb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .clear-button {
@@ -43,18 +40,29 @@
 
 /* 최근 검색어 */
 .recent-searches {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    margin-top: 12px;
+    padding: 12px;
+    background-color: #111;
+    border: 1px solid #222;
+    border-radius: 10px;
+}
+
+.recent-searches::before {
+    content: '최근 검색어';
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #aaa;
 }
 
 .recent-chip {
-    display: flex;
-    background: #1a1a1a;
-    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    background-color: #1a1a1a;
     border: 1px solid #333;
-    overflow: hidden;
+    border-radius: 20px;
 }
 
 .chip-text,
@@ -76,19 +84,25 @@
     margin: 30px auto 16px;
 }
 
+.filter-title {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #bbb;
+}
+
 .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-.filters select {
+.filters select,
+.reset-button {
     padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid #333;
     background-color: #111;
     color: #fff;
-    font-size: 14px;
 }
 
 /* 정렬 */
@@ -96,8 +110,8 @@
     max-width: 900px;
     margin: 0 auto 24px;
     display: flex;
-    align-items: center;
     gap: 10px;
+    align-items: center;
 }
 
 .sort-label {
@@ -124,16 +138,10 @@
     gap: 20px;
 }
 
-.movie-card,
-.person-card {
-    cursor: pointer;
-}
-
 .movie-card img,
 .person-card img {
     width: 100%;
     border-radius: 8px;
-    display: block;
 }
 
 .img-placeholder {
@@ -146,7 +154,6 @@
     align-items: center;
     justify-content: center;
     color: #777;
-    font-size: 12px;
 }
 
 .card-title {
@@ -157,7 +164,6 @@
 .known-for {
     font-size: 12px;
     color: #aaa;
-    margin-top: 4px;
 }
 
 .empty-text {
