@@ -114,3 +114,40 @@ export const searchMulti = (query: string, page = 1) => {
         },
     });
 };
+
+/* =========================
+   🎯 Discover (필터 검색)
+========================= */
+
+export const discoverMovies = (
+    params: {
+        page?: number;
+        genre?: string;
+        language?: string;
+        sort?: string;
+        voteGte?: number;
+        releaseDateGte?: string;
+    } = {}
+) => {
+    const {
+        page = 1,
+        genre,
+        language,
+        sort = 'popularity.desc',
+        voteGte,
+        releaseDateGte,
+    } = params;
+
+    return tmdbClient.get('/discover/movie', {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+            page,
+            sort_by: sort,
+            with_genres: genre,
+            with_original_language: language,
+            'vote_average.gte': voteGte,
+            'primary_release_date.gte': releaseDateGte,
+        },
+    });
+};
