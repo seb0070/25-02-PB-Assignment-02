@@ -41,3 +41,19 @@
 .wishlist-btn:hover {
     transform: scale(1.1);
 }
+
+.movie-card {
+    position: relative;
+    width: 160px;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease; /* 🔥 */
+}
+
+.movie-card:hover {
+    transform: scale(1.05); /* 🔥 살짝만 */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}

@@ -1,94 +1,104 @@
 .hero {
-    position: relative;
-    min-height: 62vh;
-    display: flex;
-    align-items: flex-end;
+    height: 68vh;
+    min-height: 420px;
+    max-height: 520px;
     background-size: cover;
     background-position: center;
-    padding: 72px 24px 36px;
-    box-sizing: border-box;
+    color: #fff;
 }
 
 .hero-inner {
-    max-width: 720px;
+    height: 100%;
+    max-width: 1200px;
+    padding: 60px 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    color: #e50914;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.85);
-    margin: 0 0 10px;
+    margin-bottom: 12px;
 }
 
 .hero-title {
-    color: #fff;
-    font-size: 48px;
-}
-
-.hero-overview {
-    color: #ddd;
-    max-width: 600px;
-}
-
-.hero-buttons button {
-    margin-right: 12px;
-}
-
-
-.hero-meta {
-    display: flex;
-    gap: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 13px;
+    font-size: 46px;
+    font-weight: 700;
     margin-bottom: 16px;
 }
 
-.hero-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+.hero-overview {
+    max-width: 520px;
+    color: #ddd;
+    line-height: 1.5;
+    margin-bottom: 18px;
 }
+
+.hero-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 26px;
+}
+
+/* ===== 버튼 영역 ===== */
 
 .hero-actions {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.btn {
-    border: 0;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-weight: 700;
-    cursor: pointer;
+/* 공통 버튼 */
+.hero-actions .btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+
+    border: none;              /* ❌ 테두리 제거 */
+    border-radius: 6px;
+    cursor: pointer;
+
+    transition:
+            background-color 0.2s ease,
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
 }
 
-.btn-primary {
-    background: #ffffff;
-    color: #000000;
+/* 상세정보 버튼 */
+.btn-info {
+    background-color: rgba(255, 255, 255, 0.92);
+    color: #111;
 }
 
-.btn-primary:hover {
-    filter: brightness(0.92);
+.btn-info:hover {
+    background-color: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
 }
 
-.btn-ghost {
-    background: rgba(109, 109, 110, 0.55);
-    color: #ffffff;
+/* 찜 버튼 */
+.btn-wish {
+    background-color: rgba(229, 9, 20, 0.6);
+    color: #fff;
 }
 
-.btn-ghost:hover {
-    background: rgba(109, 109, 110, 0.75);
+.btn-wish:hover {
+    background-color: rgba(229, 9, 20, 0.7);
+    transform: translateY(-1px);
 }
 
-@media (max-width: 600px) {
-    .hero {
-        min-height: 52vh;
-        padding: 64px 16px 28px;
-    }
+/* 찜된 상태 */
+.btn-wish.active {
+    background-color: rgba(229, 9, 20, 0.8);
+}
+
+/* hover 그림자 – 아주 약하게 */
+.hero-actions .btn:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
