@@ -15,7 +15,7 @@ export default function Popular() {
 
     return (
         <section className="row">
-            <h2>이번 주 대세 콘텐츠</h2>
+            <h2>🔥 이번 주 대세 콘텐츠</h2>
 
             <div className="row-slider">
                 {movies.map((movie, idx) => (
