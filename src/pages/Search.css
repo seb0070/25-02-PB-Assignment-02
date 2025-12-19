@@ -1,44 +1,61 @@
-.searchPage {
-    padding: 24px 16px;
-    max-width: 1200px;
-    margin: 0 auto;
+.search-page {
+    min-height: 100vh;
+    background: #000;
+    color: #fff;
+    padding: 80px 24px 40px;
 }
 
-.searchForm {
+/* 검색바 */
+.search-bar {
+    max-width: 720px;
+    margin: 0 auto 32px;
     display: flex;
     gap: 8px;
-    margin-bottom: 24px;
 }
 
-.searchForm input {
+.search-bar input {
     flex: 1;
-    padding: 12px 14px;
+    height: 48px;
+    padding: 0 16px;
     font-size: 16px;
-    border-radius: 6px;
+    background: #222;
     border: none;
-    outline: none;
+    border-radius: 4px;
+    color: #fff;
 }
 
-.searchForm button {
-    padding: 12px 16px;
+.search-bar input::placeholder {
+    color: #aaa;
+}
+
+.search-bar button {
+    height: 48px;
+    padding: 0 20px;
     background: #e50914;
-    color: white;
     border: none;
-    border-radius: 6px;
-    font-weight: 700;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 600;
     cursor: pointer;
 }
 
-.searchContent h2 {
-    margin-bottom: 16px;
+.search-title {
+    max-width: 1200px;
+    margin: 0 auto 16px;
+    font-size: 20px;
 }
 
-.movieGrid {
+/* 카드 그리드 */
+.search-grid {
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
 }
 
 .loading {
-    opacity: 0.7;
+    text-align: center;
+    margin-top: 32px;
+    color: #aaa;
 }

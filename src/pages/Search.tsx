@@ -1,89 +1,116 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import {
-    getTrendingMoviesDay,
-    searchMulti,
-} from '../api/movies';
+import { searchMulti, getTrendingMoviesDay } from '../api/movies';
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
 import './Search.css';
 
-type MultiResult = {
+type MultiMovie = {
     id: number;
-    media_type: 'movie' | 'tv' | 'person';
-    title?: string;
-    name?: string;
-    poster_path?: string;
-    known_for?: Movie[];
+    media_type: 'movie';
+    title: string;
+    poster_path: string | null;
+    backdrop_path: string | null;
+    overview: string;
+    release_date: string;
+    vote_average: number;
 };
 
-const SearchPage = () => {
-    const [params, setParams] = useSearchParams();
-    const query = params.get('q') ?? '';
+type MultiPerson = {
+    id: number;
+    media_type: 'person';
+    name: string;
+    profile_path: string | null;
+    known_for: Movie[];
+};
 
-    const [input, setInput] = useState(query);
+type MultiResult = MultiMovie | MultiPerson;
+
+export default function Search() {
+    const [params, setParams] = useSearchParams();
+    const keyword = params.get('q') ?? '';
+
+    const [input, setInput] = useState(keyword);
     const [results, setResults] = useState<MultiResult[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetch = async () => {
             setLoading(true);
-
             try {
-                // 검색어 없으면 → 트렌딩
-                if (!query) {
+                if (!keyword) {
                     const res = await getTrendingMoviesDay();
                     setResults(res.data.results);
                 } else {
-                    // 검색어 있으면 → 멀티 검색
-                    const res = await searchMulti(query);
+                    const res = await searchMulti(keyword);
                     setResults(res.data.results);
                 }
-            } catch (e) {
-                console.error('Search error', e);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
-    }, [query]);
+        fetch();
+    }, [keyword]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setParams({ q: input });
+        setParams(input ? { q: input } : {});
     };
 
     return (
         <main className="search-page">
-            <form className="search-form" onSubmit={handleSubmit}>
+            {/* 🔍 검색바 */}
+            <form className="search-bar" onSubmit={onSubmit}>
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="영화, 배우, 장르 검색"
+                    placeholder="영화, 배우, 장르를 검색해보세요"
                 />
                 <button type="submit">검색</button>
             </form>
 
-            {loading && <p>불러오는 중...</p>}
+            {/* 🔥 타이틀 */}
+            <h2 className="search-title">
+                {keyword ? `"${keyword}" 검색 결과` : '추천 콘텐츠'}
+            </h2>
 
+            {/* 🎬 결과 */}
             <div className="search-grid">
                 {results.map((item) => {
-                    // 🎬 영화
-                    if (item.media_type === 'movie') {
+                    // 🎬 영화 검색 결과
+                    if (
+                        item.media_type === 'movie' &&
+                        item.poster_path &&
+                        'title' in item
+                    ) {
+                        const movie: Movie = {
+                            id: item.id,
+                            title: item.title!,
+                            poster_path: item.poster_path!,
+                            backdrop_path: item.backdrop_path ?? item.poster_path!,
+                            overview: item.overview ?? '',
+                            release_date: item.release_date ?? '',
+                            vote_average: item.vote_average ?? 0,
+                        };
+
                         return (
                             <MovieCard
-                                key={item.id}
-                                movie={item as unknown as Movie}
+                                key={`movie-${item.id}`}
+                                movie={movie}
                             />
                         );
                     }
 
                     // 👤 인물 → 대표작
-                    if (item.media_type === 'person' && item.known_for?.[0]) {
+                    if (
+                        item.media_type === 'person' &&
+                        item.known_for &&
+                        item.known_for.length > 0
+                    ) {
                         return (
                             <MovieCard
-                                key={item.id}
+                                key={`person-${item.id}`}
                                 movie={item.known_for[0]}
                             />
                         );
@@ -92,8 +119,8 @@ const SearchPage = () => {
                     return null;
                 })}
             </div>
+
+            {loading && <p className="loading">불러오는 중…</p>}
         </main>
     );
-};
-
-export default SearchPage;
+}

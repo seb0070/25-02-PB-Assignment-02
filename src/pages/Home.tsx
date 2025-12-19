@@ -7,6 +7,8 @@ import {
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
 import './Home.css';
+import HeroBanner from '../components/HeroBanner';
+
 
 const Home = () => {
     const [popular, setPopular] = useState<Movie[]>([]);
@@ -35,6 +37,7 @@ const Home = () => {
 
     return (
         <>
+            <HeroBanner />
             {/* 인기 영화 */}
             <section className="row">
                 <h2>인기 영화</h2>

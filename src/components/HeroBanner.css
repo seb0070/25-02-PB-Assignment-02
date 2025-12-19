@@ -1,0 +1,94 @@
+.hero {
+    position: relative;
+    min-height: 62vh;
+    display: flex;
+    align-items: flex-end;
+    background-size: cover;
+    background-position: center;
+    padding: 72px 24px 36px;
+    box-sizing: border-box;
+}
+
+.hero-inner {
+    max-width: 720px;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 10px;
+}
+
+.hero-title {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 4vw, 54px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.hero-overview {
+    margin: 0 0 14px;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 15px;
+    line-height: 1.55;
+    max-width: 640px;
+}
+
+.hero-meta {
+    display: flex;
+    gap: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #ffffff;
+    color: #000000;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.92);
+}
+
+.btn-ghost {
+    background: rgba(109, 109, 110, 0.55);
+    color: #ffffff;
+}
+
+.btn-ghost:hover {
+    background: rgba(109, 109, 110, 0.75);
+}
+
+@media (max-width: 600px) {
+    .hero {
+        min-height: 52vh;
+        padding: 64px 16px 28px;
+    }
+}
