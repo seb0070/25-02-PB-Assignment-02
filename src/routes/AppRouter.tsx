@@ -6,6 +6,7 @@ import Popular from '../pages/Popular';
 import Search from '../pages/Search';
 import Wishlist from '../pages/Wishlist';
 import PrivateRoute from './PrivateRoute';
+import MovieDetail from '../pages/MovieDetail';
 
 const AppRouter = () => (
     // ✅ Vite base(/25-02-PB-Assignment-02/)와 맞추기 위해 basename도 끝에 '/' 포함
@@ -16,6 +17,7 @@ const AppRouter = () => (
 
             <Route element={<PrivateRoute />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/movie/:id" element={<MovieDetail />} />
                 <Route path="/popular" element={<Popular />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/wishlist" element={<Wishlist />} />

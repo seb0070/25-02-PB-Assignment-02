@@ -1,0 +1,39 @@
+.movie-detail {
+    color: white;
+}
+
+.movie-detail-hero {
+    height: 60vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.movie-detail-hero .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.8),
+            rgba(0, 0, 0, 0.2)
+    );
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.movie-detail-hero h1 {
+    font-size: 36px;
+    margin-bottom: 16px;
+}
+
+.movie-detail-hero .overview {
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.movie-detail-info {
+    padding: 24px 40px;
+    background-color: #000;
+}

@@ -2,6 +2,10 @@ import tmdbClient from './tmdbClient';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
+export const getMovieDetail = (movieId: number) => {
+    return tmdbClient.get(`/movie/${movieId}`);
+};
+
 // 인기 영화
 export const getPopularMovies = (page = 1) => {
     return tmdbClient.get('/movie/popular', {
