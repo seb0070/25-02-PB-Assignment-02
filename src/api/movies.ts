@@ -29,7 +29,7 @@ export const getTopRatedMovies = (page = 1) => {
 };
 
 export const getNowPlayingMovies = (page?: number) => {
-    return tmdbClient.get('/movie/now-playing', {
+    return tmdbClient.get('/movie/now_playing', {
         params: {
             api_key: API_KEY,
             language: ':ko-KR',
