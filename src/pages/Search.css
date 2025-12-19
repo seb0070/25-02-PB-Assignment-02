@@ -9,18 +9,41 @@
 .search-input-section {
     max-width: 900px;
     margin: 0 auto 16px;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
     position: relative;
 }
 
 .search-input {
     width: 100%;
-    padding: 14px 16px;
+    padding: 14px 48px 14px 16px;
     border-radius: 10px;
     border: 1px solid #333;
     background-color: #111;
     color: #fff;
     font-size: 15px;
 }
+
+.search-button {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #bbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-button svg {
+    width: 20px;
+    height: 20px;
+}
+
 
 /* ===== 최근 검색어 ===== */
 .recent-searches {
@@ -86,6 +109,12 @@
 
 .reset-button {
     cursor: pointer;
+}
+
+.filter-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
 }
 
 /* ===== 정렬 ===== */

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './Search.css';
+import { FiSearch } from 'react-icons/fi';
 
 const RECENT_SEARCH_KEY = 'recent_searches';
 const MAX_RECENT = 5;
@@ -7,15 +8,11 @@ const MAX_RECENT = 5;
 const Search = () => {
     const [query, setQuery] = useState('');
     const [isFocused, setIsFocused] = useState(false);
-    const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-    /* 최근 검색어 불러오기 */
-    useEffect(() => {
+    const [recentSearches, setRecentSearches] = useState<string[]>(() => {
         const saved = localStorage.getItem(RECENT_SEARCH_KEY);
-        if (saved) {
-            setRecentSearches(JSON.parse(saved));
-        }
-    }, []);
+        return saved ? JSON.parse(saved) : [];
+    });
 
     /* 최근 검색어 저장 */
     const saveRecentSearch = (value: string) => {
@@ -30,11 +27,16 @@ const Search = () => {
         localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updated));
     };
 
-    /* 검색 실행 (아직 API 연결 안 함) */
-    const handleSearch = (value: string) => {
-        saveRecentSearch(value);
+    /* 검색 실행 */
+    const executeSearch = (value: string) => {
+        if (value.trim()) {
+            saveRecentSearch(value);
+        }
         setIsFocused(false);
-        // 다음 단계에서 검색 API 연결
+
+        // 🔜 다음 단계에서:
+        // - 검색어만 있으면 searchMulti
+        // - 필터만 / 검색어+필터면 discover
     };
 
     /* 최근 검색어 삭제 */
@@ -48,18 +50,29 @@ const Search = () => {
         <main className="search-page">
             {/* 🔍 검색 입력 */}
             <section className="search-input-section">
-                <input
-                    className="search-input"
-                    value={query}
-                    placeholder="영화, 배우, 장르를 검색해보세요"
-                    onChange={(e) => setQuery(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSearch(query);
-                        }
-                    }}
-                />
+                <div className="search-input-wrapper">
+                    <input
+                        className="search-input"
+                        value={query}
+                        placeholder="영화, 배우, 장르를 검색해보세요"
+                        onChange={(e) => setQuery(e.target.value)}
+                        onFocus={() => setIsFocused(true)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                executeSearch(query);
+                            }
+                        }}
+                    />
+
+                    {/* 🔍 검색 버튼 */}
+                    <button
+                        className="search-button"
+                        onClick={() => executeSearch(query)}
+                        aria-label="검색"
+                    >
+                        <FiSearch />
+                    </button>
+                </div>
 
                 {/* 🕘 최근 검색어 */}
                 {isFocused && recentSearches.length > 0 && (
@@ -70,7 +83,7 @@ const Search = () => {
                                     className="chip-text"
                                     onMouseDown={() => {
                                         setQuery(item);
-                                        handleSearch(item);
+                                        executeSearch(item);
                                     }}
                                 >
                                     {item}
@@ -90,7 +103,7 @@ const Search = () => {
                 )}
             </section>
 
-            {/* 🎛️ 필터 영역 (UI only) */}
+            {/* 🎛️ 필터 영역 */}
             <section className="filter-section">
                 <p className="filter-title">선호하는 설정을 선택하세요</p>
 
@@ -134,6 +147,11 @@ const Search = () => {
 
                     <button className="reset-button">초기화</button>
                 </div>
+
+                <p className="filter-hint">
+                    ※ 검색어 없이 필터만 선택해도 검색 버튼을 누르면 결과를 볼 수
+                    있어요.
+                </p>
             </section>
 
             {/* 🔃 정렬 */}
