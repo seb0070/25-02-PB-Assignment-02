@@ -35,9 +35,9 @@ const getTitle = (item: MovieLike) => item.title ?? item.name ?? '';
 const Search = () => {
     const navigate = useNavigate();
 
-    /* =======================
+    /* =====================
        상태
-    ======================= */
+    ===================== */
     const [query, setQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -56,14 +56,14 @@ const Search = () => {
 
     const [results, setResults] = useState<ResultItem[]>([]);
 
-    /* =======================
-       최근 검색어
-    ======================= */
+    /* =====================
+       유틸
+    ===================== */
     const saveRecentSearch = (value: string) => {
         const v = value.trim();
         if (!v) return;
 
-        const updated = [v, ...recentSearches.filter((item) => item !== v)].slice(
+        const updated = [v, ...recentSearches.filter((i) => i !== v)].slice(
             0,
             MAX_RECENT
         );
@@ -73,35 +73,9 @@ const Search = () => {
     };
 
     const removeRecentSearch = (value: string) => {
-        const updated = recentSearches.filter((item) => item !== value);
+        const updated = recentSearches.filter((i) => i !== value);
         setRecentSearches(updated);
         localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updated));
-    };
-
-    /* =======================
-       개봉 시기 변환
-    ======================= */
-    const getReleaseDate = (period: string) => {
-        if (!period) return undefined;
-
-        const today = new Date();
-        switch (period) {
-            case 'week':
-                today.setDate(today.getDate() - 7);
-                break;
-            case 'month':
-                today.setMonth(today.getMonth() - 1);
-                break;
-            case 'year':
-                today.setFullYear(today.getFullYear() - 1);
-                break;
-            case 'fiveYears':
-                today.setFullYear(today.getFullYear() - 5);
-                break;
-            default:
-                return undefined;
-        }
-        return today.toISOString().split('T')[0];
     };
 
     const hasAnyFilter = () =>
@@ -112,49 +86,44 @@ const Search = () => {
             filters.rating
         );
 
-    /* =======================
-       검색 실행
-    ======================= */
-    const executeSearch = async () => {
-        const hasQuery = query.trim().length > 0;
-        const hasFilter = hasAnyFilter();
-
-        setIsLoading(true);
-        setResults([]);
-
-        try {
-            // ✅ 검색어만 → searchMulti
-            if (hasQuery && !hasFilter) {
-                saveRecentSearch(query);
-                const res = await searchMulti(query);
-                setResults((res.data?.results ?? []) as ResultItem[]);
-                return;
-            }
-
-            // ✅ 필터만 / 검색어 + 필터 → discover
-            if (hasFilter) {
-                if (hasQuery) saveRecentSearch(query);
-
-                const res = await discoverMovies({
-                    genre: filters.genre || undefined,
-                    language: filters.language || undefined,
-                    sort: filters.sort, // 정렬만 여기서 사용
-                    voteGte: filters.rating ? Number(filters.rating) : undefined,
-                    releaseDateGte: getReleaseDate(filters.releasePeriod),
-                    page: 1,
-                });
-
-                setResults((res.data?.results ?? []) as ResultItem[]);
-                return;
-            }
-
-            // ❗ 아무것도 없으면 결과 비움
-            setResults([]);
-        } finally {
-            setIsLoading(false);
+    const getReleaseDate = (period: string) => {
+        if (!period) return undefined;
+        const d = new Date();
+        switch (period) {
+            case 'week':
+                d.setDate(d.getDate() - 7);
+                break;
+            case 'month':
+                d.setMonth(d.getMonth() - 1);
+                break;
+            case 'year':
+                d.setFullYear(d.getFullYear() - 1);
+                break;
+            case 'fiveYears':
+                d.setFullYear(d.getFullYear() - 5);
+                break;
+            default:
+                return undefined;
         }
+        return d.toISOString().split('T')[0];
     };
 
+    const filterByQuery = (items: ResultItem[], q: string) => {
+        const keyword = q.trim().toLowerCase();
+        if (!keyword) return items;
+
+        return items.filter((item) => {
+            if ('title' in item && item.title)
+                return item.title.toLowerCase().includes(keyword);
+            if ('name' in item && item.name)
+                return item.name.toLowerCase().includes(keyword);
+            return false;
+        });
+    };
+
+    /* =====================
+       검색 실행 (핵심)
+    ===================== */
     const executeSearchWithQuery = async (searchQuery: string) => {
         const hasFilter = hasAnyFilter();
 
@@ -162,7 +131,7 @@ const Search = () => {
         setResults([]);
 
         try {
-            // 🔍 검색어만
+            // 1️⃣ 검색어만
             if (searchQuery && !hasFilter) {
                 saveRecentSearch(searchQuery);
                 const res = await searchMulti(searchQuery);
@@ -170,9 +139,9 @@ const Search = () => {
                 return;
             }
 
-            // 🎛️ 필터만 / 검색어 + 필터
+            // 2️⃣ 필터만 / 필터 + 검색어
             if (hasFilter) {
-                saveRecentSearch(searchQuery);
+                if (searchQuery) saveRecentSearch(searchQuery);
 
                 const res = await discoverMovies({
                     genre: filters.genre || undefined,
@@ -183,23 +152,34 @@ const Search = () => {
                     page: 1,
                 });
 
-                setResults((res.data?.results ?? []) as ResultItem[]);
+                const discovered = (res.data?.results ?? []) as ResultItem[];
+                const finalResults = searchQuery
+                    ? filterByQuery(discovered, searchQuery)
+                    : discovered;
+
+                setResults(finalResults);
+                return;
             }
+
+            setResults([]);
         } finally {
             setIsLoading(false);
         }
     };
 
+    const executeSearch = () => {
+        void executeSearchWithQuery(query);
+    };
 
     const getPosterUrl = (path: string | null, size: 'w185' | 'w342') =>
         path ? `https://image.tmdb.org/t/p/${size}${path}` : '';
 
-    /* =======================
+    /* =====================
        JSX
-    ======================= */
+    ===================== */
     return (
         <main className="search-page">
-            {/* 🔍 검색바 */}
+            {/* 검색바 */}
             <section className="search-input-section">
                 <div className="search-input-wrapper">
                     <input
@@ -207,31 +187,21 @@ const Search = () => {
                         value={query}
                         placeholder="영화, 배우, 장르를 검색해보세요"
                         onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') void executeSearch();
-                        }}
+                        onKeyDown={(e) => e.key === 'Enter' && executeSearch()}
                     />
 
                     {query && (
-                        <button
-                            className="clear-button"
-                            type="button"
-                            onClick={() => setQuery('')}
-                        >
+                        <button className="clear-button" onClick={() => setQuery('')}>
                             <FiX />
                         </button>
                     )}
 
-                    <button
-                        className="search-button"
-                        type="button"
-                        onClick={() => void executeSearch()}
-                    >
+                    <button className="search-button" onClick={executeSearch}>
                         <FiSearch />
                     </button>
                 </div>
 
-                {/* 🕘 최근 검색어 (항상 노출) */}
+                {/* 최근 검색어 */}
                 {recentSearches.length > 0 && (
                     <div className="recent-searches">
                         {recentSearches.map((item) => (
@@ -245,10 +215,8 @@ const Search = () => {
                                 >
                                     {item}
                                 </button>
-
                                 <button
                                     className="chip-remove"
-                                    type="button"
                                     onClick={() => removeRecentSearch(item)}
                                 >
                                     ×
@@ -259,7 +227,7 @@ const Search = () => {
                 )}
             </section>
 
-            {/* 🎛️ 필터 */}
+            {/* 필터 */}
             <section className="filter-section">
                 <p className="filter-title">선호하는 설정을 선택하세요</p>
 
@@ -271,15 +239,10 @@ const Search = () => {
                         }
                     >
                         <option value="">장르 (전체)</option>
-                        <option value="28">액션</option>
-                        <option value="18">드라마</option>
                         <option value="35">코미디</option>
+                        <option value="18">드라마</option>
+                        <option value="28">액션</option>
                         <option value="10749">로맨스</option>
-                        <option value="53">스릴러</option>
-                        <option value="878">SF</option>
-                        <option value="16">애니메이션</option>
-                        <option value="27">공포</option>
-                        <option value="99">다큐멘터리</option>
                     </select>
 
                     <select
@@ -291,9 +254,6 @@ const Search = () => {
                         <option value="">언어 (전체)</option>
                         <option value="ko">한국어</option>
                         <option value="en">영어</option>
-                        <option value="ja">일본어</option>
-                        <option value="zh">중국어</option>
-                        <option value="fr">프랑스어</option>
                     </select>
 
                     <select
@@ -322,7 +282,6 @@ const Search = () => {
 
                     <button
                         className="reset-button"
-                        type="button"
                         onClick={() =>
                             setFilters({
                                 genre: '',
@@ -338,16 +297,14 @@ const Search = () => {
                 </div>
 
                 <p className="filter-hint">
-                    ※ 검색어 없이 필터만 선택해도 검색 버튼을 누르면 결과를 볼 수
-                    있어요.
+                    ※ 필터로 1차로 고른 뒤 검색어로 2차 검색이 적용됩니다.
                 </p>
             </section>
 
-            {/* 🔃 정렬 */}
+            {/* 정렬 */}
             <section className="sort-section">
                 <span className="sort-label">정렬</span>
                 <select
-                    className="sort-select"
                     value={filters.sort}
                     onChange={(e) =>
                         setFilters({ ...filters, sort: e.target.value })
@@ -355,66 +312,48 @@ const Search = () => {
                 >
                     <option value="popularity.desc">인기순</option>
                     <option value="primary_release_date.desc">최신 개봉 순</option>
-                    <option value="vote_average.desc">평점 높은 순</option>
                 </select>
             </section>
 
-            {/* 📄 검색 결과 */}
+            {/* 결과 */}
             <section className="search-results">
                 {isLoading && <p className="empty-text">검색 중...</p>}
-
                 {!isLoading && results.length === 0 && (
                     <p className="empty-text">검색 결과가 없습니다.</p>
                 )}
 
                 <div className="result-grid">
-                    {results.map((item) => {
-                        if (isPerson(item)) {
-                            const knownFor =
-                                item.known_for
-                                    ?.map((k) => getTitle(k))
-                                    .filter(Boolean)
-                                    .slice(0, 2) ?? [];
-
-                            return (
-                                <div key={`person-${item.id}`} className="person-card">
-                                    {item.profile_path ? (
-                                        <img
-                                            src={getPosterUrl(item.profile_path, 'w185')}
-                                            alt={item.name}
-                                        />
-                                    ) : (
-                                        <div className="img-placeholder">No Image</div>
-                                    )}
-                                    <p className="card-title">{item.name}</p>
-                                    {knownFor.length > 0 && (
-                                        <p className="known-for">
-                                            대표작: {knownFor.join(', ')}
-                                        </p>
-                                    )}
-                                </div>
-                            );
-                        }
-
-                        const title = getTitle(item);
-                        return (
+                    {results.map((item) =>
+                        isPerson(item) ? (
+                            <div key={item.id} className="person-card">
+                                {item.profile_path ? (
+                                    <img
+                                        src={getPosterUrl(item.profile_path, 'w185')}
+                                        alt={item.name}
+                                    />
+                                ) : (
+                                    <div className="img-placeholder">No Image</div>
+                                )}
+                                <p className="card-title">{item.name}</p>
+                            </div>
+                        ) : (
                             <div
-                                key={`media-${item.id}`}
+                                key={item.id}
                                 className="movie-card"
                                 onClick={() => navigate(`/movie/${item.id}`)}
                             >
                                 {item.poster_path ? (
                                     <img
                                         src={getPosterUrl(item.poster_path, 'w342')}
-                                        alt={title}
+                                        alt={getTitle(item)}
                                     />
                                 ) : (
                                     <div className="img-placeholder">No Image</div>
                                 )}
-                                <p className="card-title">{title}</p>
+                                <p className="card-title">{getTitle(item)}</p>
                             </div>
-                        );
-                    })}
+                        )
+                    )}
                 </div>
             </section>
         </main>
