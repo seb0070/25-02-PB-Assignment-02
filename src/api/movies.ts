@@ -45,6 +45,16 @@ export const getTrendingMoviesDay = () => {
     });
 };
 
+// 🔥 이번 주 트렌딩
+export const getTrendingMoviesWeek = () => {
+    return tmdbClient.get('/trending/movie/week', {
+        params: {
+            api_key: API_KEY,
+            language: 'ko-KR',
+        },
+    });
+};
+
 // 🔍 멀티 검색 (영화 + 인물 + TV)
 export const searchMulti = (query: string, page = 1) => {
     return tmdbClient.get('/search/multi', {

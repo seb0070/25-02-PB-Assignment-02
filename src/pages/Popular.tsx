@@ -1,23 +1,16 @@
 import { useEffect, useState } from 'react';
-import { getPopularMovies } from '../api/movies';
+import { getTrendingMoviesWeek } from '../api/movies';
 import type { Movie } from '../models/movie';
 import MovieCard from '../components/MovieCard';
 import './Popular.css';
 
-const Popular = () => {
+export default function Popular() {
     const [movies, setMovies] = useState<Movie[]>([]);
 
     useEffect(() => {
-        const fetchMovies = async () => {
-            try {
-                const res = await getPopularMovies(1);
-                setMovies(res.data.results);
-            } catch (e) {
-                console.error('Popular API error', e);
-            }
-        };
-
-        fetchMovies();
+        getTrendingMoviesWeek().then((res) => {
+            setMovies(res.data.results);
+        });
     }, []);
 
     return (
@@ -35,6 +28,4 @@ const Popular = () => {
             </div>
         </section>
     );
-};
-
-export default Popular;
+}

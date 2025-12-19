@@ -4,7 +4,7 @@
 
 .row h2 {
     margin-bottom: 12px;
-    color: #fff;
+    color: #111; /* 라이트모드 대응 */
 }
 
 .row-slider {
