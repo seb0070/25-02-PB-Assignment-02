@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 import './Header.css';
@@ -10,7 +10,11 @@ type AuthState = {
 
 const Header = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const auth = storage.get<AuthState | null>(STORAGE_KEYS.AUTH, null);
+
+    // ✅ 로그인 화면은 '영화 감상' 몰입감을 위해 헤더를 숨김
+    if (location.pathname === '/signin') return null;
 
     const handleLogout = () => {
         storage.set(STORAGE_KEYS.AUTH, null);
