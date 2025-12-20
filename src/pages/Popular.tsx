@@ -63,7 +63,7 @@ export default function Popular() {
         setHasMore(true);
     }, [period, view]);
 
-    /* Infinite Scroll */
+    /* Infinite Scroll (grid 전용) */
     useEffect(() => {
         if (view !== 'grid' || !hasMore) return;
 
@@ -79,6 +79,13 @@ export default function Popular() {
         if (loaderRef.current) observer.observe(loaderRef.current);
         return () => observer.disconnect();
     }, [view, hasMore, loading]);
+
+    /* 🔥 table 페이지네이션 이동 시 최상단으로 */
+    useEffect(() => {
+        if (view === 'table') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [page, view]);
 
     /* 정렬 */
     const sortedMovies = useMemo(() => {
@@ -104,7 +111,7 @@ export default function Popular() {
     };
 
     return (
-        <section className="popular-page">
+        <section className="popular-page page-enter">
             <div className="popular-container">
                 {/* Header */}
                 <header className="popular-header">
@@ -236,19 +243,21 @@ export default function Popular() {
                 )}
             </div>
 
-            {/* 🔝 Bottom Center Floating Top Button */}
-            <button
-                className="top-floating"
-                onClick={() =>
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth',
-                    })
-                }
-                aria-label="맨 위로"
-            >
-                ^
-            </button>
+            {/* 🔝 Top 버튼 (grid 전용) */}
+            {view === 'grid' && (
+                <button
+                    className="top-floating"
+                    onClick={() =>
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth',
+                        })
+                    }
+                    aria-label="맨 위로"
+                >
+                    ^
+                </button>
+            )}
         </section>
     );
 }
