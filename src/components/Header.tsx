@@ -25,7 +25,7 @@ const Header = () => {
         <header className="header">
             <div className="header__left">
                 <NavLink to="/" className="logo">
-                    NETFLIX DEMO
+                    NETFLIX
                 </NavLink>
 
                 <nav className="nav">

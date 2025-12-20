@@ -14,29 +14,43 @@
     display: flex;
     align-items: center;
     gap: 16px;
+
+    min-width: 0;   /* ⭐⭐⭐ 이거 없으면 flex 자식이 안 줄어듦 */
 }
 
 .logo {
     color: #e50914;
-    font-weight: 900;
+    font-weight: 700;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .nav {
     display: flex;
     gap: 12px;
+
+    overflow-x: auto;          /* ⭐ 가로 스크롤 */
+    overflow-y: hidden;
+    white-space: nowrap;       /* 줄바꿈 방지 */
+
+    scrollbar-width: none;     /* Firefox */
+}
+
+.nav::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari */
 }
 
 .nav a {
+    flex-shrink: 0;   /* ⭐ 줄어들며 숨겨지는 거 방지 */
     color: white;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 400;
 }
+
 
 .nav a.active {
     color: #e50914;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .header__right {
@@ -68,11 +82,4 @@
     cursor: pointer;
     font-size: 13px;
     text-decoration: none;
-}
-
-/* 모바일 */
-@media (max-width: 768px) {
-    .nav {
-        display: none;
-    }
 }
