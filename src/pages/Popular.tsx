@@ -109,7 +109,7 @@ export default function Popular() {
                 {/* Header */}
                 <header className="popular-header">
                     <h2 className="popular-title">
-                        🔥 {period === 'day' ? '오늘' : '이번 주'} 대세 콘텐츠
+                        🔥{period === 'day' ? '오늘' : '이번 주'} 대세 콘텐츠
                     </h2>
 
                     <div className="popular-controls">

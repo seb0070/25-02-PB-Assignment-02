@@ -1,38 +1,40 @@
-/* Layout */
 .popular-page {
-    width: 100%;
-    padding: 28px 16px 90px;
+    padding: 40px 50px; /* Wishlist와 동일 */
 }
 
-.popular-container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Header */
 .popular-header {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
+/* 제목 크기 통일 */
 .popular-title {
-    font-size: 34px;
-    margin: 0;
+    font-size: 35px; /* Wishlist와 동일 */
+    font-weight: 800;
+    margin-bottom: 10px;
 }
 
+/* 설명 텍스트 */
 .popular-subtitle {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
+    margin-top: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
 }
 
-/* Controls */
+/* 컨트롤은 설명 아래 */
 .popular-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 16px;
 }
+
+/* grid / table 공통 시작선 */
+.popular-grid,
+.popular-table {
+    margin: 0; /* ⭐ 중요 */
+}
+
 
 .controls-left {
     display: flex;
@@ -106,21 +108,20 @@
 /* Grid (중앙 정렬 핵심) */
 .popular-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 220px);
-    justify-content: center;
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+
+    justify-content: start; /* ⬅️ 중앙 정렬 제거 */
     margin-top: 18px;
 }
 
 .popular-grid-item {
     display: flex;
     justify-content: center;
+    margin: 5px;
 }
 
 .popular-rank {
-    position: absolute;
-    top: 10px;
-    left: 10px;
     background: rgba(0, 0, 0, 0.75);
     padding: 4px 8px;
     border-radius: 8px;
