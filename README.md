@@ -9,10 +9,10 @@ React + TypeScript 기반으로 구현되었으며, **TMDB API**, **Local Storag
 ## 🔗 Demo Links
 
 - **GitHub Repository**  
-  https://github.com/your-id/pb-assignment-02-react
+  https://github.com/seb0070/25-02-PB-Assignment-02.git
 
 - **GitHub Pages**  
-  https://your-id.github.io/pb-assignment-02-react
+  https://seb0070.github.io/25-02-PB-Assignment-02/
 
   ---
 
