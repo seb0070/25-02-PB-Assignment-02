@@ -25,6 +25,11 @@
     font-size: 20px;
 }
 
+.logo:hover {
+    color: #e50914;
+    text-decoration: none;
+}
+
 .nav {
     display: flex;
     gap: 12px;
