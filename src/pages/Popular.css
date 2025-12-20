@@ -1,5 +1,5 @@
 .popular-page {
-    padding: 40px 50px; /* Wishlist와 동일 */
+    padding: 35px 24px;
     animation: wishlistEnter 360ms ease-out;
 }
 

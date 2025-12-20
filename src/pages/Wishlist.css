@@ -1,7 +1,7 @@
 /* ===== Page Layout (Popular 기준) ===== */
 
 .wishlist {
-    padding: 40px 65px; /* Popular와 동일 */
+    padding: 35px 24px; /* Popular와 동일 */
     animation: wishlistEnter 360ms ease-out;
 }
 
