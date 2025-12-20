@@ -53,6 +53,28 @@
     font-weight: 700;
 }
 
+.nav a:hover {
+    color: #e50914;
+}
+
+/* underline 효과 */
+.nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 180ms ease;
+}
+
+.nav a:hover::after,
+.nav a.active::after {
+    transform: scaleX(1);
+}
+
 .header__right {
     display: flex;
     align-items: center;
@@ -60,15 +82,40 @@
 }
 
 .header__right svg {
-    color: white;
+    opacity: 0.85;
+    transition: opacity 160ms ease, transform 160ms ease;
 }
+
+.header__right svg:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
 
 .user {
     font-size: 13px;
     opacity: 0.8;
 }
 
-.logoutBtn,
+.logoutBtn {
+    background: #e50914;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 160ms ease, transform 120ms ease;
+}
+
+.logoutBtn:hover {
+    background: #f6121d;
+    transform: translateY(-1px);
+}
+
+.logoutBtn:active {
+    transform: translateY(0);
+}
 .loginBtn {
     background: #e50914;
     color: white;
