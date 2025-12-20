@@ -1,49 +1,47 @@
+/* ===== Wishlist Layout ===== */
+
 .wishlist {
-    padding: 28px 40px;
-    animation: wishlistEnter 380ms ease-out;
+    padding: 32px 40px;
+    animation: wishlistEnter 360ms ease-out;
 }
 
 .wishlist__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 16px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .wishlist__title {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 800;
     letter-spacing: 0.02em;
     margin: 0;
 }
 
 .wishlist__subtitle {
-    margin: 8px 0 0 0;
+    margin-top: 8px;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.6);
 }
 
-.wishlist__count {
-    min-width: 40px;
-    height: 32px;
-    border-radius: 999px;
-    display: grid;
-    place-items: center;
-    font-weight: 800;
-    background: rgba(229, 9, 20, 0.18);
-    border: 1px solid rgba(229, 9, 20, 0.35);
-    color: #fff;
-}
+/* ===== Grid (촘촘한 핵심 부분) ===== */
 
-/* grid */
 .wishlist__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px; /* 👈 교수님 예시보다 더 촘촘 */
 }
 
-/* empty */
+/* 카드 hover 시 살짝 튀게 */
+.wishlist__grid > * {
+    transition: transform 0.25s ease, z-index 0.25s ease;
+}
+
+.wishlist__grid > *:hover {
+    transform: scale(1.04);
+    z-index: 2;
+}
+
+/* ===== Empty State ===== */
+
 .wishlist--empty {
     min-height: calc(100vh - 80px);
     display: grid;
@@ -54,11 +52,14 @@
 .wishlist__emptyCard {
     width: min(520px, 100%);
     border-radius: 16px;
-    padding: 28px;
-    background: rgba(0, 0, 0, 0.72);
+    padding: 32px;
+    background: rgba(0, 0, 0, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    text-align: center;
 }
+
+/* ===== Animation ===== */
 
 @keyframes wishlistEnter {
     from {
