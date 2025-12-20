@@ -32,7 +32,7 @@
     overflow-x: auto;          /* ⭐ 가로 스크롤 */
     overflow-y: hidden;
     white-space: nowrap;       /* 줄바꿈 방지 */
-
+    max-width: calc(100vw - 180px); /* ⭐ 오른쪽 영역 공간 확보 */
     scrollbar-width: none;     /* Firefox */
 }
 
@@ -57,6 +57,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;   /* nav에 밀리지 않게 */
 }
 
 .searchIcon {
@@ -83,3 +84,4 @@
     font-size: 13px;
     text-decoration: none;
 }
+
