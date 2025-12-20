@@ -1,16 +1,18 @@
-/* ===== Wishlist Layout ===== */
+/* ===== Page Layout (Popular 기준) ===== */
 
 .wishlist {
-    padding: 32px 40px;
+    padding: 40px 65px; /* 🔥 Popular와 동일 */
     animation: wishlistEnter 360ms ease-out;
 }
 
-.wishlist__header {
-    margin-bottom: 20px;
+/* ===== Section Header (Popular와 동일한 위치) ===== */
+
+.wishlist__sectionHeader {
+    margin-bottom: 24px; /* Popular랑 동일 */
 }
 
 .wishlist__title {
-    font-size: 28px;
+    font-size: 35px;
     font-weight: 800;
     letter-spacing: 0.02em;
     margin: 0;
@@ -22,15 +24,15 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* ===== Grid (촘촘한 핵심 부분) ===== */
+/* ===== Grid (Wishlist만 촘촘) ===== */
 
 .wishlist__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 12px; /* 👈 교수님 예시보다 더 촘촘 */
+    gap: 12px; /* 👈 촘촘함은 유지 */
 }
 
-/* 카드 hover 시 살짝 튀게 */
+/* Hover */
 .wishlist__grid > * {
     transition: transform 0.25s ease, z-index 0.25s ease;
 }
@@ -40,13 +42,13 @@
     z-index: 2;
 }
 
-/* ===== Empty State ===== */
+/* ===== Empty ===== */
 
 .wishlist--empty {
     min-height: calc(100vh - 80px);
     display: grid;
     place-items: center;
-    padding: 24px;
+    padding: 48px 60px;
 }
 
 .wishlist__emptyCard {

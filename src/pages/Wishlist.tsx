@@ -21,8 +21,9 @@ const Wishlist = () => {
 
     return (
         <section className="wishlist">
-            <header className="wishlist__header">
-                <h2 className="wishlist__title">Wishlist</h2>
+            {/* 🔥 Popular와 동일한 헤더 구조 */}
+            <header className="wishlist__sectionHeader">
+                <h2 className="wishlist__title">❤️Wishlist</h2>
                 <p className="wishlist__subtitle">
                     내가 저장한 콘텐츠를 한 번에 모아볼 수 있어요.
                 </p>
