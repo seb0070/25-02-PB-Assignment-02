@@ -110,6 +110,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 13px;
+    white-space: nowrap;
     transition: background 160ms ease, transform 120ms ease;
 }
 
@@ -130,5 +131,12 @@
     cursor: pointer;
     font-size: 13px;
     text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .logoutBtn {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
 }
 
