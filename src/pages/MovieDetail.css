@@ -60,3 +60,17 @@
     color: #777;
     font-weight: 500;
 }
+
+.movie-detail {
+    animation: wishlistEnter 360ms ease-out;
+}
+@keyframes movie-detailEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

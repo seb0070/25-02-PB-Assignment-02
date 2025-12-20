@@ -1,5 +1,6 @@
 .popular-page {
     padding: 40px 50px; /* Wishlist와 동일 */
+    animation: wishlistEnter 360ms ease-out;
 }
 
 .popular-header {
@@ -214,4 +215,15 @@
 
 .top-floating:hover {
     background: rgba(0, 0, 0, 0.9);
+}
+
+@keyframes popular-pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

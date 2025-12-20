@@ -7,12 +7,13 @@ import {
     getNowPlayingMovies,
     getUpcomingMovies,
 } from '../api/movies';
+import './Home.css';
 
 export default function Home() {
     const navigate = useNavigate();
 
     return (
-        <>
+        <section className="home-page">
             {/* 🔥 HeroBanner 상세정보 버튼 연결 */}
             <HeroBanner
                 onInfo={(movie) => navigate(`/movie/${movie.id}`)}
@@ -34,6 +35,6 @@ export default function Home() {
                 title="🗓️ 개봉 예정작"
                 fetcher={getUpcomingMovies}
             />
-        </>
+        </section>
     );
 }

@@ -25,3 +25,18 @@
 .row-slider::-webkit-scrollbar {
     display: none;
 }
+
+.home-page {
+    animation: pageEnter 360ms ease-out;
+}
+
+@keyframes home-pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
