@@ -5,13 +5,30 @@
     background-size: cover;
     background-position: center;
     color: white;
+    overflow: hidden;
+}
+
+/* 배경 그라데이션 (텍스트 가독성 + 넷플릭스 느낌) */
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.65) 0%,
+            rgba(0, 0, 0, 0.3) 45%,
+            rgba(0, 0, 0, 0) 75%
+    );
+    pointer-events: none;
 }
 
 .hero-inner {
+    position: relative;
+    z-index: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* ⭐ 핵심 */
+    justify-content: flex-end;
     padding: 48px 60px;
     max-width: 1200px;
 }
@@ -24,6 +41,7 @@
 .hero-badge {
     color: #ff453a;
     font-weight: 600;
+    font-size: 14px;
 }
 
 /* ---------- MIDDLE ---------- */
@@ -34,6 +52,7 @@
 
 .hero-title {
     font-size: 48px;
+    font-weight: 800;
     margin: 0 0 12px;
 }
 
@@ -42,7 +61,6 @@
     color: #ddd;
     line-height: 1.5;
 
-    /* 🔥 줄 수 제한 */
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -58,8 +76,8 @@
     display: flex;
     gap: 16px;
     font-size: 14px;
-    margin-bottom: 12px;
-    margin-top: 12px;
+    margin: 12px 0;
+    color: #ccc;
 }
 
 .hero-actions {
@@ -67,27 +85,63 @@
     gap: 12px;
 }
 
-/* ---------- BUTTON ---------- */
+/* ---------- BUTTON BASE ---------- */
 .btn {
     padding: 10px 18px;
     border-radius: 6px;
     font-size: 14px;
+    font-weight: 600;
     border: none;
     cursor: pointer;
+
+    transition:
+            background-color 160ms ease,
+            color 160ms ease,
+            transform 120ms ease,
+            box-shadow 160ms ease;
 }
 
+/* ---------- 상세정보 ---------- */
 .btn.light {
-    background: rgba(255,255,255,0.9);
+    background: rgba(255, 255, 255, 0.9);
     color: #000;
 }
 
+.btn.light:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.btn.light:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* ---------- 찜하기 ---------- */
 .btn.wish {
     background: rgba(180, 30, 30, 0.9);
     color: white;
 }
 
+.btn.wish:hover {
+    background: #f6121d;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(229, 9, 20, 0.45);
+}
+
+.btn.wish:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
 .btn.wish.active {
     background: #e50914;
+}
+
+.btn.wish.active:hover {
+    background: #e50914;
+    box-shadow: 0 8px 20px rgba(229, 9, 20, 0.55);
 }
 
 /* ---------- MOBILE ---------- */
@@ -110,5 +164,13 @@
 
     .hero-overview {
         -webkit-line-clamp: 4;
+    }
+}
+
+/* 모바일 hover 제거 */
+@media (hover: none) {
+    .btn:hover {
+        transform: none;
+        box-shadow: none;
     }
 }
