@@ -9,7 +9,7 @@ const Wishlist = () => {
         <section className="wishlist">
             {/* ✅ 항상 고정되는 헤더 */}
             <header className="wishlist__sectionHeader">
-                <h2 className="wishlist__title">Wishlist</h2>
+                <h2 className="wishlist__title">❤️Wishlist</h2>
                 <p className="wishlist__subtitle">
                     내가 저장한 콘텐츠를 한 번에 모아볼 수 있어요.
                 </p>

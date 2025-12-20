@@ -7,7 +7,7 @@
 ========================= */
 
 .search-page {
-    padding: 80px 24px;
+    padding: 50px 24px;
     color: #fff;
     animation: wishlistEnter 360ms ease-out;
 }
@@ -15,6 +15,20 @@
 /* =========================
    Search Input
 ========================= */
+.search-intro {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: rgba(255,255,255,0.85);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.search-intro__icon {
+    font-size: 20px;
+    opacity: 0.7;
+}
 
 .search-input-wrapper {
     max-width: 900px;

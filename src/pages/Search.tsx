@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiX } from 'react-icons/fi';
 import { searchMulti, discoverMovies } from '../api/movies';
+import { HiOutlineSearch } from 'react-icons/hi';
+
 import './Search.css';
 
 const RECENT_SEARCH_KEY = 'recent_searches';
@@ -229,6 +231,11 @@ const Search = () => {
     return (
         <main className="search-page">
             {/* 검색바 */}
+            <div className="search-intro">
+                <HiOutlineSearch className="search-intro__icon" />
+                <span>무엇을 찾고 계신가요?</span>
+            </div>
+
             <section className="search-input-section">
                 <div className="search-input-wrapper">
                     <input
